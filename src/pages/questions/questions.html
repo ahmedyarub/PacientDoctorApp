@@ -1,0 +1,33 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Questions
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>Categories</ion-list-header>
+    <ion-item>
+      <ion-label floating>Please select a category:</ion-label>
+      <ion-select type="select" [(ngModel)]="category_id" (ionChange)="categoryChange($event)">
+        <ion-option *ngFor="let category of categories" [value]="category.id">
+          {{category.category}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item *ngFor="let question of questions">
+      <ion-label floating>{{question.question}}</ion-label>
+      <ion-select type="select" [(ngModel)]="answers[question.id]">
+        <ion-option *ngFor="let answer of question.answers | keys" [value]="answer.key">
+          {{answer.value}}
+        </ion-option>
+      </ion-select>
+      <ion-textarea [(ngModel)]="written_answers[question.id]"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <button ion-button (click)="answer()">Send</button>
+    </ion-item>
+  </ion-list>
+</ion-content>

@@ -1,0 +1,30 @@
+<ion-header>
+    <ion-navbar>
+        <ion-grid>
+            <ion-row justify-content-center>
+                <ion-col col-11>
+                    <ion-title style="align-items: center">Login</ion-title>
+                </ion-col>
+            </ion-row>
+        </ion-grid>
+    </ion-navbar>
+</ion-header>
+
+
+<ion-content padding>
+    <ion-item>
+        <ion-label floating>Usuário</ion-label>
+        <ion-input type="text" value="" [(ngModel)]="email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+        <ion-label floating>Senha</ion-label>
+        <ion-input type="password" [(ngModel)]="password"></ion-input>
+    </ion-item>
+
+    <ion-item>
+        <button ion-button (click)="login()">Login</button>
+        <button ion-button (click)="registration('doctor')">Doctor Registration</button>
+        <button ion-button (click)="registration('patient')">Patient Registration</button>
+    </ion-item>
+</ion-content>

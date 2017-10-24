@@ -1,0 +1,21 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Questions
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>Doctors</ion-list-header>
+    <ion-item>
+      <ion-label floating>Please select a doctor:</ion-label>
+      <ion-select type="select" [(ngModel)]="doctor_id">
+        <ion-option *ngFor="let doctor of doctors" [value]="doctor.id">
+          {{doctor.name}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+  </ion-list>
+</ion-content>

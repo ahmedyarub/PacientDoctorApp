@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
-import {NavController} from 'ionic-angular';
+import {AlertController, Events, NavController} from 'ionic-angular';
 import * as io from "socket.io-client";
-
-declare var cordova: any;
+import {Http} from "@angular/http";
 
 @Component({
     selector: 'page-home',
@@ -19,7 +18,7 @@ export class HomePage {
     turnReady: any;
     pcConfig: any = {
         'iceServers': [{
-            'urls': 'stun:stun.l.google.com:19302'
+            'url': 'stun:139.59.22.30:3478'
         }]
     };
     sdpConstraints: any = {
@@ -33,15 +32,11 @@ export class HomePage {
         video: true
     };
 
-    constructor(public navCtrl: NavController) {
+    constructor(public navCtrl: NavController, public alertCtrl: AlertController, public http: Http, public events: Events) {
     }
 
-
     ionViewDidLoad() {
-        // var permissions = cordova.plugins.permissions;
-        // permissions.requestPermission(permissions.CAMERA);
-        console.log('1');
-        if (this.room !== '') {
+        if (window.localStorage.getItem("USER_TYPE") == '1') {
             this.socket.emit('create or join', this.room);
             console.log('Attempted to create or  join room', this.room);
         }
@@ -61,37 +56,52 @@ export class HomePage {
             this.isChannelReady = true;
         });
 
-        this.socket.on('joined', (room) =>{
+        this.socket.on('joined', (room) => {
             console.log('joined: ' + room);
             this.isChannelReady = true;
         });
 
-        this.socket.on('log', (array) =>{
+        this.socket.on('log', (array) => {
             console.log.apply(console, array);
         });
 
-        this.socket.on('message', (message) =>{
+        this.socket.on('message', (message) => {
             console.log('Client received message:', message);
             if (message === 'got user media') {
-                this.maybeStart();
+                //this.maybeStart();
             } else if (message.type === 'offer') {
-                if (!this.isInitiator && !this.isStarted) {
-                    this.maybeStart();
-                }
-                this.pc.setRemoteDescription(new RTCSessionDescription(message));
+                let confirm = this.alertCtrl.create({
+                    title: 'Call received',
+                    subTitle: 'Start video call?',
+                    buttons: [
+                        {
+                            text: 'Yes',
+                            handler: () => {
+                                if (!this.isInitiator && !this.isStarted) {
+                                    this.maybeStart();
+                                }
+                                this.pc.setRemoteDescription(new RTCSessionDescription(message));
 
-                console.log('Sending answer to peer.');
-                this.pc.createAnswer().then(
-                    (sessionDescription)=>{
-                        // Set Opus as the preferred codec in SDP if Opus is present.
-                        //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
-                        this.pc.setLocalDescription(sessionDescription);
-                        console.log('setLocalAndSendMessage sending message', sessionDescription);
-                        this.sendMessage(sessionDescription);
-                    }, (error) => {
-                        //this.trace('Failed to create session description: ' + error.toString());
-                    }
-                );
+                                console.log('Sending answer to peer.');
+                                this.pc.createAnswer().then(
+                                    (sessionDescription) => {
+                                        // Set Opus as the preferred codec in SDP if Opus is present.
+                                        //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
+                                        this.pc.setLocalDescription(sessionDescription);
+                                        console.log('setLocalAndSendMessage sending message', sessionDescription);
+                                        this.sendMessage(sessionDescription);
+                                    }, (error) => {
+                                        console.log('Failed to create session description: ' + error.toString());
+                                    }
+                                );
+                            }
+                        },
+                        {
+                            text: 'No'
+                        }
+                    ]
+                });
+                confirm.present();
             } else if (message.type === 'answer' && this.isStarted) {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
             } else if (message.type === 'candidate' && this.isStarted) {
@@ -125,9 +135,9 @@ export class HomePage {
         console.log('Getting user media with constraints', this.constraints);
 
         // if (location.hostname !== 'localhost') {
-        //     this.requestTurn(
-        //         'https://computeengineondemand.appspot.com/turn?username=41784574&key=4080218913'
-        //     );
+             this.requestTurn(
+                 '/stun/'
+             );
         // }
 
         window.onbeforeunload = () => {
@@ -142,16 +152,16 @@ export class HomePage {
 
     maybeStart() {
         console.log('>>>>>>> maybeStart() ', this.isStarted, this.localStream, this.isChannelReady);
-        //if (!this.isStarted && typeof this.localStream !== 'undefined' && this.isChannelReady) {
-        if (typeof this.localStream !== 'undefined' && this.isChannelReady) {
+        if (!this.isStarted && typeof this.localStream !== 'undefined' && this.isChannelReady) {
+        //if (typeof this.localStream !== 'undefined' && this.isChannelReady) {
             console.log('>>>>>> creating peer connection');
             this.createPeerConnection();
             this.pc.addStream(this.localStream);
             this.isStarted = true;
             console.log('isInitiator', this.isInitiator);
-            //if (this.isInitiator) {
+            if (this.isInitiator) {
                 this.doCall();
-            //}
+            }
         }
     }
 
@@ -194,17 +204,16 @@ export class HomePage {
 
     doCall() {
         console.log('Sending offer to peer');
-        this.pc.createOffer((sessionDescription)=>{
+        this.pc.createOffer((sessionDescription) => {
             // Set Opus as the preferred codec in SDP if Opus is present.
             //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
             this.pc.setLocalDescription(sessionDescription);
             console.log('setLocalAndSendMessage sending message', sessionDescription);
             this.sendMessage(sessionDescription);
         }, (error) => {
-            //this.trace('Failed to create session description: ' + error.toString());
+            console.log('Failed to create session description: ' + error.toString());
         });
     }
-
 
     requestTurn(turnURL) {
         var turnExists = false;
@@ -332,4 +341,33 @@ export class HomePage {
         sdpLines[mLineIndex] = mLineElements.join(' ');
         return sdpLines;
     }
+
+    logout(event) {
+        this.http.post('/localapi/logout',
+            {}
+        )
+            .map(res => res.json())
+            .subscribe(data => {
+
+                    if (data.status === 0) {
+                        this.events.publish('user:logout');
+                    } else {
+                        let alert = this.alertCtrl.create({
+                            title: 'Error!',
+                            subTitle: 'Error logging out!',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                },
+                err => {
+                    let alert = this.alertCtrl.create({
+                        title: 'Erro!',
+                        subTitle: 'Communication error!',
+                        buttons: ['OK']
+                    });
+                    alert.present();
+                });
+    }
+
 }

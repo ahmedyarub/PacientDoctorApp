@@ -1,19 +1,21 @@
 import { Component } from '@angular/core';
 
-import { AboutPage } from '../about/about';
-import { ContactPage } from '../contact/contact';
+import {QuestionsPage} from '../questions/questions';
 import { HomePage } from '../home/home';
+import {LoginPage} from "../login/login";
+import {Events, NavController} from "ionic-angular";
 
 @Component({
   templateUrl: 'tabs.html'
 })
 export class TabsPage {
 
-  tab1Root = HomePage;
-  tab2Root = AboutPage;
-  tab3Root = ContactPage;
+  tab1Root = QuestionsPage;
+  tab2Root = HomePage;
 
-  constructor() {
-
+  constructor(public navCtrl: NavController, public events: Events) {
+      events.subscribe('user:logout', () => {
+          navCtrl.setRoot(LoginPage);
+      });
   }
 }
