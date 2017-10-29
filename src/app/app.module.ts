@@ -17,6 +17,7 @@ import {QuestionsPage} from "../pages/questions/questions";
 
 import {KeysPipe} from "../pipes/keys-pipe";
 import {DoctorsPage} from "../pages/doctors/doctors";
+import {QueuePage} from "../pages/queue/queue";
 
 @NgModule({
     declarations: [
@@ -28,6 +29,7 @@ import {DoctorsPage} from "../pages/doctors/doctors";
         LoginPage,
         RegistrationPage,
         DoctorsPage,
+        QueuePage,
         KeysPipe
     ],
     imports: [
@@ -44,6 +46,7 @@ import {DoctorsPage} from "../pages/doctors/doctors";
         TabsPage,
         LoginPage,
         DoctorsPage,
+        QueuePage,
         RegistrationPage
     ],
     providers: [

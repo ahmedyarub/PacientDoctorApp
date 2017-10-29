@@ -8,6 +8,9 @@
     <h2>Patient/Doctor Calling Prototype</h2>
     <button ion-button (click)="logout($event)">Logout</button>
     <button ion-button (click)="maybeStart()">Call</button>
+    <ion-label>Evaluation</ion-label>
+    <ion-textarea [(ngModel)]="evaluation"></ion-textarea>
+    <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
     <div id="videos">
         <video id="localVideo" autoplay muted></video>
         <video id="remoteVideo" autoplay></video>

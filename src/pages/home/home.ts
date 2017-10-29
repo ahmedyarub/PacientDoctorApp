@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {AlertController, Events, NavController} from 'ionic-angular';
+import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
 
@@ -8,6 +8,8 @@ import {Http} from "@angular/http";
     templateUrl: 'home.html'
 })
 export class HomePage {
+    evaluation: number = 5;
+    case_id: number;
 
     isChannelReady: boolean = false;
     isInitiator: boolean = false;
@@ -32,7 +34,20 @@ export class HomePage {
         video: true
     };
 
-    constructor(public navCtrl: NavController, public alertCtrl: AlertController, public http: Http, public events: Events) {
+    constructor(public navCtrl: NavController, public alertCtrl: AlertController, public http: Http, public events: Events, public navParams: NavParams) {
+        this.case_id = navParams.get('case_id');
+    }
+
+    submit_evaluation($event) {
+        this.http.post("/localapi/queue/start_call", {
+            case_id: this.case_id,
+            evaluation: this.evaluation
+        }).map(res => res.json())
+            .subscribe(data => {
+                if (data.status === 0) {
+                    alert('Evaluation submitted successfully!');
+                }
+            });
     }
 
     ionViewDidLoad() {
@@ -135,9 +150,9 @@ export class HomePage {
         console.log('Getting user media with constraints', this.constraints);
 
         // if (location.hostname !== 'localhost') {
-             this.requestTurn(
-                 '/stun/'
-             );
+        //     this.requestTurn(
+        //         '/stun/'
+        //     );
         // }
 
         window.onbeforeunload = () => {
@@ -153,7 +168,7 @@ export class HomePage {
     maybeStart() {
         console.log('>>>>>>> maybeStart() ', this.isStarted, this.localStream, this.isChannelReady);
         if (!this.isStarted && typeof this.localStream !== 'undefined' && this.isChannelReady) {
-        //if (typeof this.localStream !== 'undefined' && this.isChannelReady) {
+            //if (typeof this.localStream !== 'undefined' && this.isChannelReady) {
             console.log('>>>>>> creating peer connection');
             this.createPeerConnection();
             this.pc.addStream(this.localStream);

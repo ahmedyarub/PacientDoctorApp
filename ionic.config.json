@@ -7,19 +7,19 @@
   },
   "proxies": [{
     "path": "/localapi/",
-    "proxyUrl": "http://127.0.0.1/PacientDoctor/public/"
+    "proxyUrl": "http://139.59.22.30/PacientDoctor/public/index.php/"
   },
     {
       "path": "/socket.io/",
-      "proxyUrl": "http://127.0.0.1:3000/socket.io/"
+      "proxyUrl": "http://139.59.22.30:3000/socket.io/"
     },
     {
       "path": "/3000/socket.io/",
-      "proxyUrl": "http://127.0.0.1:3000/socket.io/"
+      "proxyUrl": "http://139.59.22.30:3000/socket.io/"
     },
     {
       "path": "/80/socket.io/",
-      "proxyUrl": "http://127.0.0.1:80/socket.io/"
+      "proxyUrl": "http://139.59.22.30:80/socket.io/"
     },
     {
       "path": "/stun/",
