@@ -11,15 +11,19 @@
   },
     {
       "path": "/socket.io/",
-      "proxyUrl": "http://139.59.22.30:3000/socket.io/"
+      "proxyUrl": "http://139.59.22.30:8780/socket.io/"
     },
     {
-      "path": "/3000/socket.io/",
-      "proxyUrl": "http://139.59.22.30:3000/socket.io/"
+      "path": "http://localhost:8100/socket.io/",
+      "proxyUrl": "http://139.59.22.30:8780/socket.io/"
     },
     {
-      "path": "/80/socket.io/",
-      "proxyUrl": "http://139.59.22.30:80/socket.io/"
+      "path": "ws://localhost:8100/",
+      "proxyUrl": "ws://139.59.22.30:8780/"
+    },
+    {
+      "path": "/socketio/socket.io/",
+      "proxyUrl": "http://139.59.22.30:8780/socket.io/"
     },
     {
       "path": "/stun/",

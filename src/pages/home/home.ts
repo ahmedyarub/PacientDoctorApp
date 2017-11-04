@@ -29,7 +29,7 @@ export class HomePage {
     };
 
     room: string = 'foo';
-    socket: any = io.connect(window.location.hostname === "localhost" ? 'http://localhost:8780' : 'http://192.168.0.2:8780');
+    socket: any = io.connect(window.location.hostname === "localhost" ? 'http://localhost:8100/socketio/' : 'http://139.59.22.30:8780/');
     constraints: any = {
         video: true
     };
