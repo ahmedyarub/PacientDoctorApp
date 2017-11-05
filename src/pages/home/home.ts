@@ -20,7 +20,7 @@ export class HomePage {
     turnReady: any;
     pcConfig: any = {
         'iceServers': [{
-            'url': 'stun:139.59.22.30:3478'
+            'url': 'turn:fam-doc.com:3478'
         }]
     };
     sdpConstraints: any = {
@@ -149,11 +149,11 @@ export class HomePage {
 
         console.log('Getting user media with constraints', this.constraints);
 
-        // if (location.hostname !== 'localhost') {
-        //     this.requestTurn(
-        //         '/stun/'
-        //     );
-        // }
+        //if (location.hostname !== 'localhost') {
+             this.requestTurn(
+                 window.location.hostname === "localhost" ? '/stun/' : 'https://fam-doc.com:3478/'
+             );
+        //}
 
         window.onbeforeunload = () => {
             this.sendMessage('bye');
