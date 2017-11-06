@@ -7,27 +7,27 @@
   },
   "proxies": [{
     "path": "/localapi/",
-    "proxyUrl": "http://139.59.22.30/PacientDoctor/public/index.php/"
+    "proxyUrl": "http://fam-doc.com/PacientDoctor/public/index.php/"
   },
     {
       "path": "/socket.io/",
-      "proxyUrl": "http://139.59.22.30:8780/socket.io/"
+      "proxyUrl": "http://fam-doc.com:8780/socket.io/"
     },
     {
       "path": "http://localhost:8100/socket.io/",
-      "proxyUrl": "http://139.59.22.30:8780/socket.io/"
+      "proxyUrl": "http://fam-doc.com:8780/socket.io/"
     },
     {
       "path": "ws://localhost:8100/",
-      "proxyUrl": "ws://139.59.22.30:8780/"
+      "proxyUrl": "ws://fam-doc.com:8780/"
     },
     {
       "path": "/socketio/socket.io/",
-      "proxyUrl": "http://139.59.22.30:8780/socket.io/"
+      "proxyUrl": "http://fam-doc.com:8780/socket.io/"
     },
     {
       "path": "/stun/",
-      "proxyUrl": "http://139.59.22.30:3478"
+      "proxyUrl": "https://fam-doc.com:3478"
     }
   ]
 }
