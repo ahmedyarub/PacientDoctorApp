@@ -94,4 +94,5 @@
         <variable name="XWALK_MULTIPLEAPK" value="true" />
     </plugin>
     <plugin name="cordova-opentok-android-permissions" spec="^1.0.1" />
+    <plugin name="cordova-plugin-compat" spec="^1.2.0" />
 </widget>

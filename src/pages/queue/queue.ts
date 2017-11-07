@@ -16,7 +16,7 @@ export class QueuePage {
     }
 
     update_queue($event){
-        this.http.get("/localapi/queue/index/" + this.case_id).map(res => res.json())
+        this.http.get("http://fam-doc.com/PacientDoctor/public/index.php/queue/index/" + this.case_id).map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
                     this.queue_count = data.queue_count;

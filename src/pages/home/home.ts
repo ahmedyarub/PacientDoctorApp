@@ -39,7 +39,7 @@ export class HomePage {
     }
 
     submit_evaluation($event) {
-        this.http.post("/localapi/queue/start_call", {
+        this.http.post("http://fam-doc.com/PacientDoctor/public/index.php/queue/start_call", {
             case_id: this.case_id,
             evaluation: this.evaluation
         }).map(res => res.json())
@@ -358,7 +358,7 @@ export class HomePage {
     }
 
     logout(event) {
-        this.http.post('/localapi/logout',
+        this.http.post('http://fam-doc.com/PacientDoctor/public/index.php/logout',
             {}
         )
             .map(res => res.json())
