@@ -16,7 +16,7 @@ export class QuestionsPage {
     written_answers: Map<number, string>;
 
     constructor(public navCtrl: NavController, public http: Http) {
-        this.http.get('http://fam-doc.com/PacientDoctor/public/index.php/categories/list')
+        this.http.get('/localapi/categories/list')
             .map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
@@ -26,7 +26,7 @@ export class QuestionsPage {
     }
 
     categoryChange($event) {
-        this.http.get("http://fam-doc.com/PacientDoctor/public/index.php/questions/select_questions?category=" + this.category_id)
+        this.http.get("/localapi/questions/select_questions?category=" + this.category_id)
             .map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
@@ -43,7 +43,7 @@ export class QuestionsPage {
     }
 
     answer() {
-        this.http.post("http://fam-doc.com/PacientDoctor/public/index.php/questions/select_doctor", {
+        this.http.post("/localapi/questions/select_doctor", {
             answers: this.answers,
             written_answers: this.written_answers,
             category_id: this.category_id

@@ -14,7 +14,7 @@ export class CadastrosService {
             return Promise.resolve(this.data);
         }
         return new Promise(resolve => {
-            this.http.get('http://fam-doc.com/PacientDoctor/public/index.php/login_mobile')
+            this.http.get('/localapi/login_mobile')
                 .map(res => res.json())
                 .subscribe(data => {
                     this.data = data;

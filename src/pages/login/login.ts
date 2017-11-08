@@ -20,7 +20,7 @@ export class LoginPage {
     constructor(public navCtrl: NavController,
                 public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController,
                 public platform: Platform, public loadingCtrl: LoadingController) {
-        this.http.get('http://fam-doc.com/PacientDoctor/public/index.php/validate_session',
+        this.http.get('/localapi/validate_session',
             {}
         )
             .map(res => res.json())
@@ -34,7 +34,7 @@ export class LoginPage {
     }
 
     login() {
-        this.http.post('http://fam-doc.com/PacientDoctor/public/index.php/login',
+        this.http.post('/localapi/login',
             {
                 email: this.email,
                 password: this.password,
