@@ -19,11 +19,11 @@
     },
     {
       "path": "ws://localhost:8100/",
-      "proxyUrl": "ws://fam-doc.com:8780/"
+      "proxyUrl": "wss://fam-doc.com:8780/"
     },
     {
       "path": "/socketio/socket.io/",
-      "proxyUrl": "http://fam-doc.com:8780/socket.io/"
+      "proxyUrl": "https://fam-doc.com:8780/socket.io/"
     },
     {
       "path": "/stun/",
