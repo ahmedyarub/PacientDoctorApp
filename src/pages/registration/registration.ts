@@ -34,7 +34,7 @@ export class RegistrationPage {
 
         RegistrationPage.registration_options_list['doctor'] = new RegistrationTypeData();
         RegistrationPage.registration_options_list['doctor'].title = 'Doctor';
-        RegistrationPage.registration_options_list['doctor'].url = '/doctors/add';
+        RegistrationPage.registration_options_list['doctor'].url = 'doctors/add';
         RegistrationPage.registration_options_list['doctor'].form_group = formBuilder.group({
             name: ['', Validators.compose([Validators.maxLength(50), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
             phone: ['', Validators.compose([Validators.required, Validators.pattern('[()0-9\- ]*')])],
@@ -47,7 +47,7 @@ export class RegistrationPage {
 
         RegistrationPage.registration_options_list['patient'] = new RegistrationTypeData();
         RegistrationPage.registration_options_list['patient'].titulo = 'Patient';
-        RegistrationPage.registration_options_list['patient'].url = '/pacients/add';
+        RegistrationPage.registration_options_list['patient'].url = 'pacients/add';
         RegistrationPage.registration_options_list['patient'].form_group = formBuilder.group({
             name: ['', Validators.compose([Validators.maxLength(50), Validators.pattern('[a-zA-Z ]*'), Validators.required])],
             city: ['', Validators.compose([Validators.maxLength(50), Validators.required])],
@@ -82,7 +82,7 @@ export class RegistrationPage {
 
         loader.present();
 
-        this.http.post('http://fam-doc.com/PacientDoctor/public/index.php' + RegistrationPage.registration_options_list[this.type].url,
+        this.http.post('/localapi/' + RegistrationPage.registration_options_list[this.type].url,
             this.registration_data,
             {
                 responseType: ResponseContentType.Json
