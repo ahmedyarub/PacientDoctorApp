@@ -59,7 +59,7 @@ export class LoginPage {
                 err => {
                     let alert = this.alertCtrl.create({
                         title: 'Erro!',
-                        subTitle: 'Communication error!',
+                        subTitle: 'Invalid credencials!',
                         buttons: ['OK']
                     });
                     alert.present();

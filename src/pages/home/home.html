@@ -8,9 +8,15 @@
     <h2>Patient/Doctor Calling Prototype</h2>
     <button ion-button (click)="logout($event)">Logout</button>
     <button ion-button (click)="maybeStart()">Call</button>
-    <ion-label>Evaluation</ion-label>
-    <ion-textarea [(ngModel)]="evaluation"></ion-textarea>
-    <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
+    <ion-item *ngIf="user_type == 0">
+        <ion-label>Evaluation</ion-label>
+        <ion-textarea [(ngModel)]="evaluation"></ion-textarea>
+        <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
+    </ion-item>
+    <ion-item *ngIf="user_type == 1">
+        <button ion-button (click)="next_patient($event)">Next Patient</button>
+    </ion-item>
+
     <div id="videos">
         <video id="localVideo" autoplay muted></video>
         <video id="remoteVideo" autoplay></video>

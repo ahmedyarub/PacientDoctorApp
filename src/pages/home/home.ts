@@ -11,6 +11,8 @@ export class HomePage {
     evaluation: number = 5;
     case_id: number;
 
+    user_type: number = 0;
+
     isChannelReady: boolean = false;
     isInitiator: boolean = false;
     isStarted: boolean = false;
@@ -29,13 +31,14 @@ export class HomePage {
     };
 
     room: string = 'foo';
-    socket: any = io.connect(window.location.hostname === "localhost" ? 'http://localhost:8100/socketio/' : 'https://fam-doc.com:8780/');
+    socket: any = io.connect('https://fam-doc.com:8780/');
     constraints: any = {
         video: true
     };
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController, public http: Http, public events: Events, public navParams: NavParams) {
         this.case_id = navParams.get('case_id');
+        this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
     }
 
     submit_evaluation($event) {
@@ -48,6 +51,10 @@ export class HomePage {
                     alert('Evaluation submitted successfully!');
                 }
             });
+    }
+
+    next_patient($event) {
+        
     }
 
     ionViewDidLoad() {
@@ -150,9 +157,9 @@ export class HomePage {
         console.log('Getting user media with constraints', this.constraints);
 
         //if (location.hostname !== 'localhost') {
-             this.requestTurn(
-                 window.location.hostname === "localhost" ? '/stun/' : 'https://fam-doc.com:3478/'
-             );
+        this.requestTurn(
+            window.location.hostname === "localhost" ? '/stun/' : 'https://fam-doc.com:3478/'
+        );
         //}
 
         window.onbeforeunload = () => {
