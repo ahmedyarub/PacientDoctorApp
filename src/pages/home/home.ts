@@ -54,7 +54,15 @@ export class HomePage {
     }
 
     next_patient($event) {
-        
+        this.http.post("/localapi/doctors/next_patient", {
+        }).map(res => res.json())
+            .subscribe(data => {
+                if (data.status === 0) {
+
+                }else{
+                    alert(data.error);
+                }
+            });
     }
 
     ionViewDidLoad() {

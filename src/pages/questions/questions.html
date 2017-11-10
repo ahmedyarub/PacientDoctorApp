@@ -19,12 +19,12 @@
     </ion-item>
     <ion-item *ngFor="let question of questions">
       <ion-label floating>{{question.question}}</ion-label>
-      <ion-select type="select" [(ngModel)]="answers[question.id]">
+      <ion-select type="select" [(ngModel)]="answers[question.id]" *ngIf="question.choices == 1">
         <ion-option *ngFor="let answer of question.answers | keys" [value]="answer.key">
           {{answer.value}}
         </ion-option>
       </ion-select>
-      <ion-textarea [(ngModel)]="written_answers[question.id]"></ion-textarea>
+      <ion-textarea [(ngModel)]="written_answers[question.id]" *ngIf="question.text == 1"></ion-textarea>
     </ion-item>
     <ion-item>
       <button ion-button (click)="answer()">Send</button>
