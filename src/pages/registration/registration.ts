@@ -82,7 +82,7 @@ export class RegistrationPage {
 
         loader.present();
 
-        this.http.post('/localapi/' + RegistrationPage.registration_options_list[this.type].url,
+        this.http.post('http://fam-doc.com/PacientDoctor/public/' + RegistrationPage.registration_options_list[this.type].url,
             this.registration_data,
             {
                 responseType: ResponseContentType.Json

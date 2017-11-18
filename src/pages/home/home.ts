@@ -9,7 +9,7 @@ import {Http} from "@angular/http";
 })
 export class HomePage {
     evaluation: number = 5;
-    case_id: number;
+    case_id: number = null;
 
     user_type: number = 0;
 
@@ -25,12 +25,11 @@ export class HomePage {
             'url': 'turn:fam-doc.com:3478'
         }]
     };
+
     sdpConstraints: any = {
         offerToReceiveAudio: true,
         offerToReceiveVideo: true
     };
-
-    room: string = 'foo';
     socket: any = io.connect('https://fam-doc.com:8780/');
     constraints: any = {
         video: true
@@ -42,7 +41,7 @@ export class HomePage {
     }
 
     submit_evaluation($event) {
-        this.http.post("/localapi/queue/start_call", {
+        this.http.post("http://fam-doc.com/PacientDoctor/public/queue/submit_evaluation", {
             case_id: this.case_id,
             evaluation: this.evaluation
         }).map(res => res.json())
@@ -54,21 +53,34 @@ export class HomePage {
     }
 
     next_patient($event) {
-        this.http.post("/localapi/doctors/next_patient", {
+        this.http.post("http://fam-doc.com/PacientDoctor/public/queue/next_patient", {
+            case_id: this.case_id
         }).map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
-
+                    this.case_id = data.case_id;
+                    alert('Case starting: ' + data.case_id);
+                    this.socket.emit('create or join', this.case_id);
+                    console.log('Attempted to create or  join room', this.case_id);
                 }else{
-                    alert(data.error);
+                    alert('No more cases available!');
                 }
             });
     }
 
     ionViewDidLoad() {
-        if (window.localStorage.getItem("USER_TYPE") == '1') {
-            this.socket.emit('create or join', this.room);
-            console.log('Attempted to create or  join room', this.room);
+        if (window.localStorage.getItem("USER_TYPE") == '0') {
+            this.http.post("http://fam-doc.com/PacientDoctor/public/queue/start_call", {
+                case_id: this.case_id
+            }).map(res => res.json())
+                .subscribe(data => {
+                    if (data.status === 0) {
+                        //alert('Evaluation submitted successfully!');
+                    }
+                });
+
+            this.socket.emit('create or join', this.case_id);
+            console.log('Attempted to create or  join room', this.case_id);
         }
 
         this.socket.on('created', (room) => {
@@ -373,7 +385,7 @@ export class HomePage {
     }
 
     logout(event) {
-        this.http.post('/localapi/logout',
+        this.http.post('http://fam-doc.com/PacientDoctor/public/logout',
             {}
         )
             .map(res => res.json())

@@ -25,22 +25,23 @@
     "@ionic-native/status-bar": "3.12.1",
     "@ionic/storage": "2.0.1",
     "copyfiles": "^1.2.0",
-    "cordova-android": "~6.3.0",
+    "cordova-android": "6.3.0",
+    "cordova-browser": "5.0.1",
     "cordova-opentok-android-permissions": "^1.0.1",
     "cordova-plugin-android-permissions": "^1.0.0",
     "cordova-plugin-camera": "^2.4.1",
     "cordova-plugin-compat": "^1.2.0",
     "cordova-plugin-console": "^1.0.5",
     "cordova-plugin-crosswalk-webview": "^2.3.0",
-    "cordova-plugin-device": "^1.1.4",
-    "cordova-plugin-splashscreen": "^4.0.3",
-    "cordova-plugin-statusbar": "^2.2.2",
-    "cordova-plugin-whitelist": "^1.3.1",
+    "cordova-plugin-device": "^1.1.7",
+    "cordova-plugin-splashscreen": "^4.1.0",
+    "cordova-plugin-statusbar": "^2.3.0",
+    "cordova-plugin-whitelist": "^1.3.3",
     "cordova.plugins.diagnostic.api-22": "^100.0.0-api-22",
     "ionic-angular": "3.6.1",
     "ionic-plugin-keyboard": "^2.2.1",
     "ionicons": "3.0.0",
-    "moment": "^2.18.1",
+    "moment": "^2.19.2",
     "rxjs": "5.4.0",
     "socket.io": "^2.0.3",
     "sw-toolbox": "3.6.0",
@@ -72,6 +73,7 @@
       "cordova-plugin-compat": {}
     },
     "platforms": [
+      "browser",
       "android"
     ]
   }

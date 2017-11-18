@@ -21,7 +21,7 @@ export class DoctorsPage {
     }
 
     queue($event){
-        this.http.post("/localapi/doubts/savedoubt", {
+        this.http.post("http://fam-doc.com/PacientDoctor/public/doubts/savedoubt", {
             case_id: this.case_id,
             doctor_id: this.doctor_id
         }).map(res => res.json())
