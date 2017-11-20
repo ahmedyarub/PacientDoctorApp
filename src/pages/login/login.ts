@@ -19,13 +19,14 @@ export class LoginPage {
     constructor(public navCtrl: NavController,
                 public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController,
                 public platform: Platform, public loadingCtrl: LoadingController, private androidPermissions: AndroidPermissions) {
-        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
-            success => console.log('Permission granted'),
-            err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
-        );
+        if(document.URL.startsWith('file')) {
+            this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
+                success => console.log('Permission granted'),
+                err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+            );
 
-        this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);
-
+            this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);
+        }
 
         this.http.get('/localapi/validate_session',
             {}
