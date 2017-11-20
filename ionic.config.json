@@ -7,7 +7,7 @@
   },
   "proxies": [{
     "path": "/localapi/",
-    "proxyUrl": "http://fam-doc.com/PacientDoctor/public/index.php/"
+    "proxyUrl": "http://fam-doc.com/PacientDoctor/public/"
   },
     {
       "path": "/socket.io/",

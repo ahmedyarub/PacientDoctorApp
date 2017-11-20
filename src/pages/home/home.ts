@@ -35,13 +35,14 @@ export class HomePage {
         video: true
     };
 
-    constructor(public navCtrl: NavController, public alertCtrl: AlertController, public http: Http, public events: Events, public navParams: NavParams) {
+    constructor(public navCtrl: NavController, public alertCtrl: AlertController,
+                public http: Http, public events: Events, public navParams: NavParams) {
         this.case_id = navParams.get('case_id');
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
     }
 
     submit_evaluation($event) {
-        this.http.post("http://fam-doc.com/PacientDoctor/public/queue/submit_evaluation", {
+        this.http.post("/localapi/queue/submit_evaluation", {
             case_id: this.case_id,
             evaluation: this.evaluation
         }).map(res => res.json())
@@ -53,7 +54,7 @@ export class HomePage {
     }
 
     next_patient($event) {
-        this.http.post("http://fam-doc.com/PacientDoctor/public/queue/next_patient", {
+        this.http.post("/localapi/queue/next_patient", {
             case_id: this.case_id
         }).map(res => res.json())
             .subscribe(data => {
@@ -70,7 +71,7 @@ export class HomePage {
 
     ionViewDidLoad() {
         if (window.localStorage.getItem("USER_TYPE") == '0') {
-            this.http.post("http://fam-doc.com/PacientDoctor/public/queue/start_call", {
+            this.http.post("/localapi/queue/start_call", {
                 case_id: this.case_id
             }).map(res => res.json())
                 .subscribe(data => {
@@ -385,7 +386,7 @@ export class HomePage {
     }
 
     logout(event) {
-        this.http.post('http://fam-doc.com/PacientDoctor/public/logout',
+        this.http.post('/localapi/logout',
             {}
         )
             .map(res => res.json())

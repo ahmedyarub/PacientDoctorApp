@@ -11,13 +11,15 @@ import {RegistrationPage} from '../pages/registration/registration';
 import {StatusBar} from '@ionic-native/status-bar';
 import {SplashScreen} from '@ionic-native/splash-screen';
 import {LoginPage} from "../pages/login/login";
-import {HttpModule} from "@angular/http";
 import {FormattingService} from "../providers/formatting-service";
 import {QuestionsPage} from "../pages/questions/questions";
 
 import {KeysPipe} from "../pipes/keys-pipe";
 import {DoctorsPage} from "../pages/doctors/doctors";
 import {QueuePage} from "../pages/queue/queue";
+import {ExtendedHttpService} from '../providers/extended-http.service';
+import {HttpModule, Http} from '@angular/http';
+import {AndroidPermissions} from "@ionic-native/android-permissions";
 
 @NgModule({
     declarations: [
@@ -53,7 +55,9 @@ import {QueuePage} from "../pages/queue/queue";
         StatusBar,
         SplashScreen,
         FormattingService,
-        {provide: ErrorHandler, useClass: IonicErrorHandler}
+        {provide: ErrorHandler, useClass: IonicErrorHandler},
+        {provide: Http, useClass: ExtendedHttpService},
+        AndroidPermissions
     ]
 })
 export class AppModule {

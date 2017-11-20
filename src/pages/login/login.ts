@@ -5,8 +5,7 @@ import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
 import {TabsPage} from "../tabs/tabs";
 import {RegistrationPage} from "../registration/registration";
-
-//import {GlobalVars} from "../../providers/global-vars";
+import { AndroidPermissions } from '@ionic-native/android-permissions';
 
 @IonicPage()
 @Component({
@@ -19,8 +18,16 @@ export class LoginPage {
 
     constructor(public navCtrl: NavController,
                 public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController,
-                public platform: Platform, public loadingCtrl: LoadingController) {
-        this.http.get('http://fam-doc.com/PacientDoctor/public/validate_session',
+                public platform: Platform, public loadingCtrl: LoadingController, private androidPermissions: AndroidPermissions) {
+        this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
+            success => console.log('Permission granted'),
+            err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
+        );
+
+        this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);
+
+
+        this.http.get('/localapi/validate_session',
             {}
         )
             .map(res => res.json())
@@ -34,7 +41,7 @@ export class LoginPage {
     }
 
     login() {
-        this.http.post('http://fam-doc.com/PacientDoctor/public/login',
+        this.http.post('/localapi/login',
             {
                 email: this.email,
                 password: this.password,
