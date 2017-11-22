@@ -2,6 +2,9 @@ import {Component} from '@angular/core';
 import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
+import { Platform } from 'ionic-angular';
+
+declare var cordova:any;
 
 @Component({
     selector: 'page-home',
@@ -36,7 +39,7 @@ export class HomePage {
     };
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController,
-                public http: Http, public events: Events, public navParams: NavParams) {
+                public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.case_id = navParams.get('case_id');
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
     }
@@ -70,6 +73,10 @@ export class HomePage {
     }
 
     ionViewDidLoad() {
+        if (this.plt.is('ios')) {
+            cordova.plugins.iosrtc.registerGlobals();
+          }
+
         if (window.localStorage.getItem("USER_TYPE") == '0') {
             this.http.post("/localapi/queue/start_call", {
                 case_id: this.case_id
