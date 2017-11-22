@@ -25,7 +25,12 @@ export class LoginPage {
                 err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
             );
 
-            this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.GET_ACCOUNTS]);
+            this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO).then(
+                success => console.log('Permission granted'),
+                err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
+            );
+
+            this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO]);
         }
 
         this.http.get('/localapi/validate_session',
