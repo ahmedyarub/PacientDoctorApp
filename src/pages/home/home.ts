@@ -32,7 +32,8 @@ export class HomePage {
     };
     socket: any = io.connect('https://fam-doc.com:8780/');
     constraints: any = {
-        video: true
+        video: true,
+        audio: true
     };
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController,
