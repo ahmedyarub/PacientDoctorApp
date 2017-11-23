@@ -35,8 +35,11 @@ export class HomePage {
     };
     socket: any = io.connect('https://fam-doc.com:8780/');
     constraints: any = {
-        video: true
+        video: true,
+        audio: true
     };
+
+    audio: any;
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
@@ -164,10 +167,7 @@ export class HomePage {
             }
         });
 console.log(15);
-        navigator.mediaDevices.getUserMedia({
-            audio: true,
-            video: true
-        })
+        navigator.mediaDevices.getUserMedia(this.constraints)
             .then((stream) => {
             console.log(16);
                 console.log('Adding local stream.');
@@ -250,6 +250,14 @@ console.log(17);
                 console.log('Remote stream added.');
                 document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
                 this.remoteStream = event.stream;
+
+                this.audio = new Audio();
+                this.audio.src = window.URL.createObjectURL(event.stream);
+                this.audio.addEventListener('play', () => {
+                    this.audio.muted = false;
+                    this.audio.volume = 1;
+                }, false);
+                this.audio.play();
             };
 
             this.pc.onremovestream = (event) => {
