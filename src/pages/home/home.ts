@@ -235,7 +235,7 @@ export class HomePage {
             };
             this.pc.onaddstream = (event) => {
                 console.log('Remote stream added.');
-                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
+                document.querySelector('#remoteVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
                 this.remoteStream = event.stream;
             };
 
