@@ -2,9 +2,9 @@ import {Component} from '@angular/core';
 import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
-import {Platform} from 'ionic-angular';
+import { Platform } from 'ionic-angular';
 
-declare var cordova: any;
+declare var cordova:any;
 
 @Component({
     selector: 'page-home',
@@ -67,7 +67,7 @@ export class HomePage {
                     alert('Case starting: ' + data.case_id);
                     this.socket.emit('create or join', this.case_id);
                     console.log('Attempted to create or  join room', this.case_id);
-                } else {
+                }else{
                     alert('No more cases available!');
                 }
             });
@@ -75,24 +75,34 @@ export class HomePage {
 
     ionViewDidLoad() {
         if (this.plt.is('ios')) {
-            console.log(1);
             cordova.plugins.iosrtc.registerGlobals();
         }
 
+        navigator.mediaDevices.getUserMedia({
+            video: true,
+            audio: true
+        })
+            .then((stream) => {
+                console.log('Adding local stream.');
+                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
+                this.localStream = stream;
+                this.sendMessage('got user media');
+            })
+            .catch((e) => {
+                alert('getUserMedia() error: ' + e.name);
+            });
+
+        console.log('Getting user media with constraints', this.constraints);
+
         this.socket.on('created', (room) => {
-            console.log(4);
             console.log('Created room ' + room);
-            this.isInitiator = true;
-            this.maybeStart();
         });
 
         this.socket.on('full', (room) => {
-            console.log(5);
             console.log('Room ' + room + ' is full');
         });
 
         this.socket.on('join', (room) => {
-            console.log(6);
             console.log('Another peer made a request to join room ' + room);
             console.log('This peer is the initiator of room ' + room + '!');
             this.isChannelReady = true;
@@ -100,25 +110,19 @@ export class HomePage {
         });
 
         this.socket.on('joined', (room) => {
-            console.log(7);
             console.log('joined: ' + room);
             this.isChannelReady = true;
-            this.maybeStart();
         });
 
         this.socket.on('log', (array) => {
-            console.log(8);
             console.log.apply(console, array);
         });
 
         this.socket.on('message', (message) => {
-            console.log(9);
             console.log('Client received message:', message);
             if (message === 'got user media') {
-                console.log(10);
-                this.maybeStart();
+                //this.maybeStart();
             } else if (message.type === 'offer') {
-                console.log(11);
                 let confirm = this.alertCtrl.create({
                     title: 'Call received',
                     subTitle: 'Start video call?',
@@ -126,8 +130,12 @@ export class HomePage {
                         {
                             text: 'Yes',
                             handler: () => {
-                                this.maybeStart();
+                                console.log('Call accepted');
+                                if (!this.isInitiator) {
+                                    this.maybeStart();
+                                }
 
+                                console.log('Setting remote description');
                                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
 
                                 console.log('Sending answer to peer.');
@@ -151,34 +159,32 @@ export class HomePage {
                 });
                 confirm.present();
             } else if (message.type === 'answer' && this.isStarted) {
-                console.log(12);
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
             } else if (message.type === 'candidate' && this.isStarted) {
-                console.log(13);
                 var candidate = new RTCIceCandidate({
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
                 });
                 this.pc.addIceCandidate(candidate);
             } else if (message === 'bye' && this.isStarted) {
-                console.log(14);
                 this.handleRemoteHangup();
             }
         });
-        console.log(15);
-        navigator.mediaDevices.getUserMedia({audio: true,})
-            .then((stream) => {
-                console.log(16);
-                console.log('Adding local stream.');
-                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
-                this.localStream = stream;
-                this.sendMessage('got user media');
-            })
-            .catch((e) => {
-                alert('getUserMedia() error: ' + e.name);
-            });
-        console.log(17);
-        console.log('Getting user media with constraints', this.constraints);
+
+        if (window.localStorage.getItem("USER_TYPE") == '0') {
+            this.http.post("/localapi/queue/start_call", {
+                case_id: this.case_id
+            }).map(res => res.json())
+                .subscribe(data => {
+                    if (data.status === 0) {
+                        //alert('Evaluation submitted successfully!');
+                    }
+                });
+
+            this.isInitiator = true;
+            this.socket.emit('create or join', this.case_id);
+            console.log('Attempted to create or  join room', this.case_id);
+        }
 
         //if (location.hostname !== 'localhost') {
         this.requestTurn(
@@ -189,21 +195,6 @@ export class HomePage {
         window.onbeforeunload = () => {
             this.sendMessage('bye');
         };
-
-        if (window.localStorage.getItem("USER_TYPE") == '0') {
-            console.log(2);
-            this.http.post("/localapi/queue/start_call", {
-                case_id: this.case_id
-            }).map(res => res.json())
-                .subscribe(data => {
-                    if (data.status === 0) {
-                        //alert('Evaluation submitted successfully!');
-                    }
-                });
-            console.log(3);
-            this.socket.emit('create or join', this.case_id);
-            console.log('Attempted to create or  join room', this.case_id);
-        }
     }
 
     sendMessage(message) {
@@ -244,7 +235,7 @@ export class HomePage {
             };
             this.pc.onaddstream = (event) => {
                 console.log('Remote stream added.');
-                document.querySelector('#remoteVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
+                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
                 this.remoteStream = event.stream;
             };
 
