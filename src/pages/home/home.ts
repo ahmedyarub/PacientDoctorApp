@@ -84,7 +84,7 @@ export class HomePage {
         })
             .then((stream) => {
                 console.log('Adding local stream.');
-                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
+                //document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
                 this.localStream = stream;
                 this.sendMessage('got user media');
             })
