@@ -39,8 +39,6 @@ export class HomePage {
         audio: true
     };
 
-    audio: any;
-
     constructor(public navCtrl: NavController, public alertCtrl: AlertController,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.case_id = navParams.get('case_id');
@@ -126,9 +124,8 @@ export class HomePage {
                         {
                             text: 'Yes',
                             handler: () => {
-                                if (!this.isInitiator && !this.isStarted) {
-                                    this.maybeStart();
-                                }
+                                this.maybeStart();
+
                                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
 
                                 console.log('Sending answer to peer.');
@@ -167,17 +164,15 @@ export class HomePage {
             }
         });
 console.log(15);
-        navigator.mediaDevices.getUserMedia(this.constraints)
+        navigator.mediaDevices.getUserMedia({audio:true,})
             .then((stream) => {
             console.log(16);
                 console.log('Adding local stream.');
                 document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
                 this.localStream = stream;
                 this.sendMessage('got user media');
-                if (this.isInitiator) {
-                    this.maybeStart();
-                }
-            })
+                this.maybeStart();
+           })
             .catch((e) => {
                 alert('getUserMedia() error: ' + e.name);
             });
@@ -248,16 +243,8 @@ console.log(17);
             };
             this.pc.onaddstream = (event) => {
                 console.log('Remote stream added.');
-                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
+                document.querySelector('#remoteVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
                 this.remoteStream = event.stream;
-
-                this.audio = new Audio();
-                this.audio.src = window.URL.createObjectURL(event.stream);
-                this.audio.addEventListener('play', () => {
-                    this.audio.muted = false;
-                    this.audio.volume = 1;
-                }, false);
-                this.audio.play();
             };
 
             this.pc.onremovestream = (event) => {
