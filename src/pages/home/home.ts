@@ -219,7 +219,7 @@ export class HomePage {
 
     createPeerConnection() {
         try {
-            this.pc = new webkitRTCPeerConnection(null);
+            this.pc = new webkitRTCPeerConnection(this.pcConfig);
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);
                 if (event.candidate) {
