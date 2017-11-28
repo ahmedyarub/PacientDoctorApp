@@ -2,9 +2,9 @@ import {Component} from '@angular/core';
 import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
-import { Platform } from 'ionic-angular';
+import {Platform} from 'ionic-angular';
 
-declare var cordova:any;
+declare var cordova: any;
 
 @Component({
     selector: 'page-home',
@@ -24,10 +24,10 @@ export class HomePage {
     remoteStream: any;
     turnReady: any;
     pcConfig: any = {
-        'iceServers': [{
-            'url': 'turn:fam-doc.com:5349',
-            credential: 'password1',
-            username: 'user1'
+        iceServers: [{
+            urls: '139.59.22.30:3478',
+            username: 'test',
+            password: 'test'
         }]
     };
 
@@ -69,7 +69,7 @@ export class HomePage {
                     alert('Case starting: ' + data.case_id);
                     this.socket.emit('create or join', this.case_id);
                     console.log('Attempted to create or  join room', this.case_id);
-                }else{
+                } else {
                     alert('No more cases available!');
                 }
             });
@@ -222,8 +222,8 @@ export class HomePage {
     createPeerConnection() {
         try {
             this.pc = new webkitRTCPeerConnection(this.pcConfig);
-            this.pc.oniceconnectionstatechange= () =>{
-                console.log('ICE state: ',  this.pc.iceConnectionState);
+            this.pc.oniceconnectionstatechange = () => {
+                console.log('ICE state: ', this.pc.iceConnectionState);
             };
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);
