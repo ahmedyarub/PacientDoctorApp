@@ -101,8 +101,8 @@
         <variable name="XWALK_MULTIPLEAPK" value="true" />
     </plugin>
     <plugin name="cordova-plugin-compat" spec="^1.2.0" />
-    <plugin name="cordova-opentok-android-permissions" spec="^1.0.1" />
     <plugin name="cordova-plugin-iosrtc" spec="^4.0.2" />
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.2" />
     <plugin name="cordova-plugin-file" spec="^5.0.0" />
+    <plugin name="cordova-opentok-android-permissions" spec="^1.0.1" />
 </widget>

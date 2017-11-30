@@ -80,10 +80,10 @@
         "XWALK_MULTIPLEAPK": "true"
       },
       "cordova-plugin-compat": {},
-      "cordova-opentok-android-permissions": {},
       "cordova-plugin-iosrtc": {},
       "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-file": {}
+      "cordova-plugin-file": {},
+      "cordova-opentok-android-permissions": {}
     },
     "platforms": [
       "browser",
