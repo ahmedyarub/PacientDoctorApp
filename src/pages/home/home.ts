@@ -115,6 +115,7 @@ export class HomePage {
         this.socket.on('joined', (room) => {
             console.log('joined: ' + room);
             this.isChannelReady = true;
+            this.maybeStart();
         });
 
         this.socket.on('log', (array) => {
@@ -134,9 +135,6 @@ export class HomePage {
                             text: 'Yes',
                             handler: () => {
                                 console.log('Call accepted');
-                                if (!this.isInitiator) {
-                                    this.maybeStart();
-                                }
 
                                 console.log('Setting remote description');
                                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
