@@ -67,6 +67,7 @@ export class HomePage {
             case_id: this.case_id
         }).map(res => res.json())
             .subscribe(data => {
+                this.iceCandidates = new Array();
                 if (data.status === 0) {
                     this.case_id = data.case_id;
                     alert('Case starting: ' + data.case_id);
