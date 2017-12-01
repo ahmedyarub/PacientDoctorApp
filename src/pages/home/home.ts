@@ -230,7 +230,7 @@ export class HomePage {
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);
                 if (event.candidate) {
-                    if (event.candidate.indexOf('139.') !== -1) {
+                    if (event.candidate.candidate.indexOf('139.') !== -1) {
                         console.log('icecandidate emit: ', event);
                         this.socket.emit('message', {
                             type: 'candidate',
