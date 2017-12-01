@@ -160,9 +160,9 @@ export class HomePage {
                     ]
                 });
                 confirm.present();
-            } else if (message.type === 'answer' && this.isStarted) {
+            } else if (message.type === 'answer'/* && this.isStarted*/) {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
-            } else if (message.type === 'candidate' && this.isStarted) {
+            } else if (message.type === 'candidate'/* && this.isStarted*/) {
                 var candidate = new RTCIceCandidate({
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
