@@ -162,13 +162,18 @@ export class HomePage {
             } else if (message.type === 'answer'/* && this.isStarted*/) {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
             } else if (message.type === 'candidate'/* && this.isStarted*/) {
+                console.log('Candidate received');
                 var candidate = new RTCIceCandidate({
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
                 });
 
-                if (candidate.candidate.indexOf('139.') !== -1)
+                console.log('Checking candidate´s IP');
+                if (candidate.candidate.indexOf('139.') !== -1) {
+                    console.log('Adding candidate');
                     this.pc.addIceCandidate(candidate);
+                    console.log('Candidate added');
+                }
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
             }
