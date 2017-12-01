@@ -24,6 +24,7 @@ export class HomePage {
     remoteStream: any;
     turnReady: any;
     pcConfig: any = {
+        iceTransportPolicy:"relay",
         'iceServers': [{
             'url': 'turn:fam-doc.com:5349?transport=tcp',
             credential: 'test',
