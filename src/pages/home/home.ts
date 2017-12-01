@@ -176,15 +176,9 @@ export class HomePage {
 
                 console.log('Checking candidate´s IP');
                 if (candidate.candidate.indexOf('139.') !== -1) {
-                    if(!this.pc || !this.pc.remoteDescription.type) {
                         console.log('Adding candidate to queue');
                         this.iceCandidates.push(candidate);
                         console.log('Candidate added to queue');
-                    }else {
-                        console.log('Adding candidate to connection');
-                        this.pc.addIceCandidate(candidate);
-                        console.log('Candidate added to connection');
-                    }
                 }
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
