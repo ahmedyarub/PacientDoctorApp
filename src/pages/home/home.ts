@@ -25,7 +25,7 @@ export class HomePage {
     turnReady: any;
     pcConfig: any = {
         'iceServers': [{
-            'url': 'turn:fam-doc.com:5349',
+            'url': 'turn:fam-doc.com:5349?transport=tcp',
             credential: 'test',
             username: 'test'
         }]
