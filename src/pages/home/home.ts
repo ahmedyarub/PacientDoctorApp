@@ -2,9 +2,9 @@ import {Component} from '@angular/core';
 import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
-import { Platform } from 'ionic-angular';
+import {Platform} from 'ionic-angular';
 
-declare var cordova:any;
+declare var cordova: any;
 
 @Component({
     selector: 'page-home',
@@ -69,7 +69,7 @@ export class HomePage {
                     alert('Case starting: ' + data.case_id);
                     this.socket.emit('create or join', this.case_id);
                     console.log('Attempted to create or  join room', this.case_id);
-                }else{
+                } else {
                     alert('No more cases available!');
                 }
             });
@@ -168,7 +168,7 @@ export class HomePage {
                     candidate: message.candidate
                 });
 
-                if(candidate.candidate.indexOf('139.') !== -1)
+                if (candidate.candidate.indexOf('139.') !== -1)
                     this.pc.addIceCandidate(candidate);
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
@@ -224,20 +224,23 @@ export class HomePage {
     createPeerConnection() {
         try {
             this.pc = new webkitRTCPeerConnection(this.pcConfig);
-            this.pc.oniceconnectionstatechange= () =>{
-                console.log('ICE state: ',  this.pc.iceConnectionState);
+            this.pc.oniceconnectionstatechange = () => {
+                console.log('ICE state: ', this.pc.iceConnectionState);
             };
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);
                 if (event.candidate) {
-                    this.socket.emit('message', {
-                        type: 'candidate',
-                        label: event.candidate.sdpMLineIndex,
-                        id: event.candidate.sdpMid,
-                        candidate: event.candidate.candidate
-                    });
-                } else {
-                    console.log('End of candidates.');
+                    if (event.candidate.indexOf('139.') !== -1) {
+                        console.log('icecandidate emit: ', event);
+                        this.socket.emit('message', {
+                            type: 'candidate',
+                            label: event.candidate.sdpMLineIndex,
+                            id: event.candidate.sdpMid,
+                            candidate: event.candidate.candidate
+                        });
+                    } else {
+                        console.log('End of candidates.');
+                    }
                 }
             };
             this.pc.onaddstream = (event) => {
