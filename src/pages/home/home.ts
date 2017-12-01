@@ -167,7 +167,9 @@ export class HomePage {
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
                 });
-                this.pc.addIceCandidate(candidate);
+
+                if(candidate.candidate.indexOf('139.') !== -1)
+                    this.pc.addIceCandidate(candidate);
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
             }
