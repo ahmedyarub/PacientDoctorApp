@@ -187,6 +187,7 @@ export class HomePage {
         });
 
         if (window.localStorage.getItem("USER_TYPE") == '0') {
+            this.iceCandidates = new Array();
             this.http.post("/localapi/queue/start_call", {
                 case_id: this.case_id
             }).map(res => res.json())
