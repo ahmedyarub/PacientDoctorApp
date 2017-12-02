@@ -42,6 +42,8 @@ export class HomePage {
         audio: true
     };
 
+    iceCandidates: any;
+
     constructor(public navCtrl: NavController, public alertCtrl: AlertController,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.case_id = navParams.get('case_id');
@@ -65,6 +67,7 @@ export class HomePage {
             case_id: this.case_id
         }).map(res => res.json())
             .subscribe(data => {
+                this.iceCandidates = new Array();
                 if (data.status === 0) {
                     this.case_id = data.case_id;
                     alert('Case starting: ' + data.case_id);
@@ -141,6 +144,10 @@ export class HomePage {
                                 console.log('Setting remote description');
                                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
 
+                               for (var i = 0; i < this.iceCandidates.length; i++) {
+                                    this.pc.addIceCandidate(this.iceCandidates[i]);
+                                }
+
                                 console.log('Sending answer to peer.');
                                 this.pc.createAnswer().then(
                                     (sessionDescription) => {
@@ -168,7 +175,13 @@ export class HomePage {
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
                 });
-                this.pc.addIceCandidate(candidate);
+                if(this.isStarted) {
+                    console.log('Add candidates');
+                    this.pc.addIceCandidate(candidate);
+                }else{
+                        console.log('Queue candidates');
+                        this.pc.addIceCandidate(candidate);
+                }
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
             }
