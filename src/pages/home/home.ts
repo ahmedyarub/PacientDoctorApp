@@ -180,7 +180,7 @@ export class HomePage {
                     this.pc.addIceCandidate(candidate);
                 }else{
                         console.log('Queue candidates');
-                        this.pc.addIceCandidate(candidate);
+                        this.iceCandidates.push(candidate);
                 }
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
