@@ -168,6 +168,11 @@ export class HomePage {
                 confirm.present();
             } else if (message.type === 'answer'/* && this.isStarted*/) {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
+
+                for (var i = 0; i < this.iceCandidates.length; i++) {
+                    this.pc.addIceCandidate(this.iceCandidates[i]);
+                }
+
             } else if (message.type === 'candidate'/* && this.isStarted*/) {
                 console.log('Candidate received');
                 var candidate = new RTCIceCandidate({
