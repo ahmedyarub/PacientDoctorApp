@@ -2,9 +2,9 @@ import {Component} from '@angular/core';
 import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
-import {Platform} from 'ionic-angular';
+import { Platform } from 'ionic-angular';
 
-declare var cordova: any;
+declare var cordova:any;
 
 @Component({
     selector: 'page-home',
@@ -41,8 +41,6 @@ export class HomePage {
         audio: true
     };
 
-    iceCandidates: any;
-
     constructor(public navCtrl: NavController, public alertCtrl: AlertController,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.case_id = navParams.get('case_id');
@@ -66,13 +64,12 @@ export class HomePage {
             case_id: this.case_id
         }).map(res => res.json())
             .subscribe(data => {
-                this.iceCandidates = new Array();
                 if (data.status === 0) {
                     this.case_id = data.case_id;
                     alert('Case starting: ' + data.case_id);
                     this.socket.emit('create or join', this.case_id);
                     console.log('Attempted to create or  join room', this.case_id);
-                } else {
+                }else{
                     alert('No more cases available!');
                 }
             });
@@ -117,7 +114,6 @@ export class HomePage {
         this.socket.on('joined', (room) => {
             console.log('joined: ' + room);
             this.isChannelReady = true;
-            this.maybeStart();
         });
 
         this.socket.on('log', (array) => {
@@ -137,13 +133,12 @@ export class HomePage {
                             text: 'Yes',
                             handler: () => {
                                 console.log('Call accepted');
+                                if (!this.isInitiator) {
+                                    this.maybeStart();
+                                }
 
                                 console.log('Setting remote description');
                                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
-
-                               for (var i = 0; i < this.iceCandidates.length; i++) {
-                                    this.pc.addIceCandidate(this.iceCandidates[i]);
-                                }
 
                                 console.log('Sending answer to peer.');
                                 this.pc.createAnswer().then(
@@ -165,33 +160,20 @@ export class HomePage {
                     ]
                 });
                 confirm.present();
-            } else if (message.type === 'answer'/* && this.isStarted*/) {
+            } else if (message.type === 'answer' && this.isStarted) {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
-
-                for (var i = 0; i < this.iceCandidates.length; i++) {
-                    this.pc.addIceCandidate(this.iceCandidates[i]);
-                }
-
-            } else if (message.type === 'candidate'/* && this.isStarted*/) {
-                console.log('Candidate received');
+            } else if (message.type === 'candidate' && this.isStarted) {
                 var candidate = new RTCIceCandidate({
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
                 });
-
-                console.log('Checking candidate´s IP');
-                if (candidate.candidate.indexOf('139.') !== -1) {
-                        console.log('Adding candidate to queue');
-                        this.iceCandidates.push(candidate);
-                        console.log('Candidate added to queue');
-                }
+                this.pc.addIceCandidate(candidate);
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
             }
         });
 
         if (window.localStorage.getItem("USER_TYPE") == '0') {
-            this.iceCandidates = new Array();
             this.http.post("/localapi/queue/start_call", {
                 case_id: this.case_id
             }).map(res => res.json())
@@ -240,23 +222,20 @@ export class HomePage {
     createPeerConnection() {
         try {
             this.pc = new webkitRTCPeerConnection(this.pcConfig);
-            this.pc.oniceconnectionstatechange = () => {
-                console.log('ICE state: ', this.pc.iceConnectionState);
+            this.pc.oniceconnectionstatechange= () =>{
+                console.log('ICE state: ',  this.pc.iceConnectionState);
             };
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);
                 if (event.candidate) {
-                    if (event.candidate.candidate.indexOf('139.') !== -1) {
-                        console.log('icecandidate emit: ', event);
-                        this.socket.emit('message', {
-                            type: 'candidate',
-                            label: event.candidate.sdpMLineIndex,
-                            id: event.candidate.sdpMid,
-                            candidate: event.candidate.candidate
-                        });
-                    } else {
-                        console.log('End of candidates.');
-                    }
+                    this.socket.emit('message', {
+                        type: 'candidate',
+                        label: event.candidate.sdpMLineIndex,
+                        id: event.candidate.sdpMid,
+                        candidate: event.candidate.candidate
+                    });
+                } else {
+                    console.log('End of candidates.');
                 }
             };
             this.pc.onaddstream = (event) => {
