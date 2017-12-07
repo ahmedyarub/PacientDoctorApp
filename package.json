@@ -26,6 +26,7 @@
     "@ionic-native/status-bar": "3.12.1",
     "@ionic/storage": "2.0.1",
     "copyfiles": "^1.2.0",
+    "cordova": "7.1.0",
     "cordova-android": "6.3.0",
     "cordova-browser": "5.0.1",
     "cordova-ios": "4.5.4",
