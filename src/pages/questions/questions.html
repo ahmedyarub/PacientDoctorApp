@@ -27,6 +27,9 @@
       <ion-textarea [(ngModel)]="written_answers[question.id]" *ngIf="question.text == 1"></ion-textarea>
     </ion-item>
     <ion-item>
+      <button ion-button (click)="takePhoto()">Choose a photo</button>
+    </ion-item>
+    <ion-item>
       <button ion-button (click)="answer()">Send</button>
     </ion-item>
   </ion-list>

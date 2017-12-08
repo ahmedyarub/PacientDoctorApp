@@ -20,6 +20,7 @@ import {QueuePage} from "../pages/queue/queue";
 import {ExtendedHttpService} from '../providers/extended-http.service';
 import {HttpModule, Http} from '@angular/http';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
+import { Camera } from '@ionic-native/camera';
 
 @NgModule({
     declarations: [
@@ -57,7 +58,8 @@ import {AndroidPermissions} from "@ionic-native/android-permissions";
         FormattingService,
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         {provide: Http, useClass: ExtendedHttpService},
-        AndroidPermissions
+        AndroidPermissions,
+        Camera
     ]
 })
 export class AppModule {
