@@ -100,9 +100,14 @@
     <plugin name="cordova-plugin-file" spec="^5.0.0" />
     <plugin name="cordova-opentok-android-permissions" spec="^1.0.1" />
     <engine name="ios" spec="~4.5.4" />
-    <plugin name="cordova-plugin-camera" spec="^2.4.1">
-        <variable name="CAMERA_USAGE_DESCRIPTION" value="Used for video calls" />
-        <variable name="PHOTOLIBRARY_USAGE_DESCRIPTION" value="Used for uploading images" />
-    </plugin>
-    <engine name="android" spec="~6.3.0" />
+    <plugin name="cordova-plugin-camera" spec="^3.0.0" />
+    <edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+        <string>need camera access to make video calls</string>
+    </edit-config>
+    <edit-config target="NSMicrophoneUsageDescription" file="*-Info.plist" mode="merge">
+        <string>need microphone access to make video calls</string>
+    </edit-config>
+    <edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge">
+        <string>need to photo library access to get pictures from there</string>
+    </edit-config>
 </widget>
