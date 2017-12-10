@@ -13,6 +13,13 @@ declare var cordova:any;
 export class HomePage {
     evaluation: number = 5;
     case_id: number = null;
+    question_answer: string = '';
+    photo: string = '';
+    notes: string = '';
+    case_result: string = '';
+    other_notes: string = '';
+
+    call_status = 'Pending';
 
     user_type: number = 0;
 
@@ -62,6 +69,43 @@ export class HomePage {
             });
     }
 
+    submit_notes($event) {
+        this.http.post("/localapi/queue/submit_notes", {
+            case_id: this.case_id,
+            notes: this.notes
+        }).map(res => res.json())
+            .subscribe(data => {
+                if (data.status === 0) {
+                    alert('Notes submitted successfully!');
+                }
+            });
+    }
+
+    submit_result($event) {
+        this.http.post("/localapi/queue/submit_case_result", {
+            case_id: this.case_id,
+            case_result: this.case_result,
+            other_notes: this.other_notes
+        }).map(res => res.json())
+            .subscribe(data => {
+                if (data.status === 0) {
+                    alert('Case result submitted successfully!');
+                }
+            });
+    }
+
+
+    receive_notes($event) {
+        this.http.get("/localapi/queue/receive_notes/"+this.case_id)
+            .map(res => res.json())
+            .subscribe(data => {
+                if (data.status === 0) {
+                    this.notes = data.data;
+                    alert('Notes received successfully!');
+                }
+            });
+    }
+
     next_patient($event) {
         this.http.post("/localapi/queue/next_patient", {
             case_id: this.case_id
@@ -70,6 +114,8 @@ export class HomePage {
                 this.iceCandidates = new Array();
                 if (data.status === 0) {
                     this.case_id = data.case_id;
+                    this.question_answer = data.question_answer;
+                    this.photo = data.image;
                     alert('Case starting: ' + data.case_id);
                     this.socket.emit('create or join', this.case_id);
                     console.log('Attempted to create or  join room', this.case_id);
@@ -237,7 +283,10 @@ export class HomePage {
         try {
             this.pc = new webkitRTCPeerConnection(this.pcConfig);
             this.pc.oniceconnectionstatechange= () =>{
-                console.log('ICE state: ',  this.pc.iceConnectionState);
+                if(!this.pc)
+                    console.log('ICE state: Connection dropped');
+                else
+                    console.log('ICE state: ',  this.pc.iceConnectionState);
             };
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);
@@ -256,6 +305,8 @@ export class HomePage {
                 console.log('Remote stream added.');
                 document.querySelector('#remoteVideo').setAttribute('src', window.URL.createObjectURL(event.stream));
                 this.remoteStream = event.stream;
+
+                this.call_status = 'In Progress';
             };
 
             this.pc.onremovestream = (event) => {
@@ -317,17 +368,18 @@ export class HomePage {
 
     hangup() {
         console.log('Hanging up.');
-        stop();
+        this.stop();
         this.sendMessage('bye');
     }
 
     handleRemoteHangup() {
         console.log('Session terminated.');
-        stop();
+        this.stop();
         this.isInitiator = false;
     }
 
     stop() {
+        this.call_status = 'Finished';
         this.isStarted = false;
         // isAudioMuted = false;
         // isVideoMuted = false;

@@ -79,6 +79,42 @@ export class LoginPage {
                 });
     }
 
+    forgot_password() {
+        this.http.post('/localapi/password_reset',
+            {
+                email: this.email
+            }
+        )
+            .map(res => res.json())
+            .subscribe(data => {
+                    if (data.status === 0) {
+                        let alert = this.alertCtrl.create({
+                            title: 'Password Reset!',
+                            subTitle: 'A new password has been sent to your email!',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                    else {
+                        let alert = this.alertCtrl.create({
+                            title: 'Error!',
+                            subTitle: 'Invalid credencials!',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                },
+                err => {
+                    let alert = this.alertCtrl.create({
+                        title: 'Erro!',
+                        subTitle: 'Invalid credencials!',
+                        buttons: ['OK']
+                    });
+                    alert.present();
+                });
+    }
+
+
     registration(type: string) {
         this.navCtrl.push(RegistrationPage, {"type": type});
     }

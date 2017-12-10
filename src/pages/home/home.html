@@ -7,18 +7,55 @@
 <ion-content padding>
     <h2>Patient/Doctor Calling Prototype</h2>
     <button ion-button (click)="logout($event)">Logout</button>
-    <button ion-button (click)="maybeStart()">Call</button>
-    <ion-item *ngIf="user_type == 0">
+    <button ion-button (click)="hangup()" *ngIf="call_status == 'In Progress'">End Call</button>
+    <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
         <ion-label>Evaluation</ion-label>
         <ion-textarea [(ngModel)]="evaluation"></ion-textarea>
+        <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
+    </ion-item>
+    <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
         <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
     </ion-item>
     <ion-item *ngIf="user_type == 1">
         <button ion-button (click)="next_patient($event)">Next Patient</button>
     </ion-item>
 
-    <div id="videos">
+    <ion-item [hidden]="call_status != 'In Progress'">
         <video id="remoteVideo" autoplay></video>
-        <!--<video id="localVideo" autoplay muted></video>-->
-    </div>
+    </ion-item>
+    <ion-item>
+        <ion-label>Case Number: {{case_id}}</ion-label>
+    </ion-item>
+    <ion-item>
+        <ion-label [innerHTML]="question_answer"></ion-label>
+    </ion-item>
+    <ion-img width="100%" height="100%" src="{{photo}}"></ion-img>
+    <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished')">
+        <ion-label>Notes</ion-label>
+        <ion-textarea [(ngModel)]="notes"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished')">
+        <button ion-button (click)="submit_notes($event)">Submit Notes</button>
+    </ion-item>
+    <ion-item *ngIf="user_type == 0 && (call_status == 'In Progress' || call_status == 'Finished')">
+        <ion-label>Notes</ion-label>
+        <ion-textarea [(ngModel)]="notes"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="user_type == 0 && (call_status == 'In Progress' || call_status == 'Finished')">
+        <button ion-button (click)="receive_notes($event)">Receive Notes</button>
+    </ion-item>
+    <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished')">
+        <ion-label>Were you able to help the patient?</ion-label>
+        <ion-select [(ngModel)]="case_result">
+            <ion-option value="yes">Yes</ion-option>
+            <ion-option value="no">No</ion-option>
+            <ion-option value="other">other</ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished') && case_result=='other'">
+        <ion-textarea [(ngModel)]="other_notes"></ion-textarea>
+    </ion-item>
+    <ion-item *ngIf="user_type == 1 && (call_status == 'Finished')">
+        <button ion-button (click)="submit_result($event)">Send Result</button>
+    </ion-item>
 </ion-content>
