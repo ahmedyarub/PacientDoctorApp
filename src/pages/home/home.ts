@@ -2,9 +2,9 @@ import {Component} from '@angular/core';
 import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
-import { Platform } from 'ionic-angular';
+import {Platform} from 'ionic-angular';
 
-declare var cordova:any;
+declare var cordova: any;
 
 @Component({
     selector: 'page-home',
@@ -19,6 +19,11 @@ export class HomePage {
     case_result: string = '';
     other_notes: string = '';
 
+    video_devices: Array<any>=new Array<any>();
+    audio_devices: Array<any>=new Array<any>();
+    audio_device_id: string;
+    video_device_id: string;
+
     call_status = 'Pending';
 
     user_type: number = 0;
@@ -31,7 +36,7 @@ export class HomePage {
     remoteStream: any;
     turnReady: any;
     pcConfig: any = {
-        iceTransportPolicy:"relay",
+        iceTransportPolicy: "relay",
         'iceServers': [{
             'url': 'turn:fam-doc.com:5349',
             credential: 'test',
@@ -45,8 +50,8 @@ export class HomePage {
     };
     socket: any = io.connect('https://fam-doc.com:8780/');
     constraints: any = {
-        video: true,
-        audio: true
+        audio: {deviceId: this.audio_device_id ? {exact: this.audio_device_id} : undefined},
+        video: {deviceId: this.video_device_id ? {exact: this.video_device_id} : undefined}
     };
 
     iceCandidates: any;
@@ -96,7 +101,7 @@ export class HomePage {
 
 
     receive_notes($event) {
-        this.http.get("/localapi/queue/receive_notes/"+this.case_id)
+        this.http.get("/localapi/queue/receive_notes/" + this.case_id)
             .map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
@@ -119,21 +124,14 @@ export class HomePage {
                     alert('Case starting: ' + data.case_id);
                     this.socket.emit('create or join', this.case_id);
                     console.log('Attempted to create or  join room', this.case_id);
-                }else{
+                } else {
                     alert('No more cases available!');
                 }
             });
     }
 
-    ionViewDidLoad() {
-        if (this.plt.is('ios')) {
-            cordova.plugins.iosrtc.registerGlobals();
-        }
-
-        navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
-        })
+    getUserMedia(){
+        navigator.mediaDevices.getUserMedia(this.constraints)
             .then((stream) => {
                 console.log('Adding local stream.');
                 //document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
@@ -143,6 +141,27 @@ export class HomePage {
             .catch((e) => {
                 alert('getUserMedia() error: ' + e.name);
             });
+    }
+
+    ionViewDidLoad() {
+        if (this.plt.is('ios')) {
+            cordova.plugins.iosrtc.registerGlobals();
+        }
+
+        navigator.mediaDevices.enumerateDevices()
+            .then((deviceInfos: MediaDeviceInfo[]) => {
+                for (var i = 0; i !== deviceInfos.length; ++i) {
+                    var deviceInfo = deviceInfos[i];
+
+                    if (deviceInfo.kind === 'audioinput') {
+                        this.audio_devices.push({id: deviceInfo.deviceId, label: deviceInfo.label});
+                    } else if (deviceInfo.kind === 'videoinput') {
+                        this.video_devices.push({id: deviceInfo.deviceId, label: deviceInfo.label});
+                    }
+                }
+            });
+
+        this.getUserMedia();
 
         console.log('Getting user media with constraints', this.constraints);
 
@@ -190,7 +209,7 @@ export class HomePage {
                                 console.log('Setting remote description');
                                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
 
-                               for (var i = 0; i < this.iceCandidates.length; i++) {
+                                for (var i = 0; i < this.iceCandidates.length; i++) {
                                     this.pc.addIceCandidate(this.iceCandidates[i]);
                                 }
 
@@ -221,12 +240,12 @@ export class HomePage {
                     sdpMLineIndex: message.label,
                     candidate: message.candidate
                 });
-                if(this.isStarted) {
+                if (this.isStarted) {
                     console.log('Add candidates');
                     this.pc.addIceCandidate(candidate);
-                }else{
-                        console.log('Queue candidates');
-                        this.iceCandidates.push(candidate);
+                } else {
+                    console.log('Queue candidates');
+                    this.iceCandidates.push(candidate);
                 }
             } else if (message === 'bye' && this.isStarted) {
                 this.handleRemoteHangup();
@@ -282,11 +301,11 @@ export class HomePage {
     createPeerConnection() {
         try {
             this.pc = new webkitRTCPeerConnection(this.pcConfig);
-            this.pc.oniceconnectionstatechange= () =>{
-                if(!this.pc)
+            this.pc.oniceconnectionstatechange = () => {
+                if (!this.pc)
                     console.log('ICE state: Connection dropped');
                 else
-                    console.log('ICE state: ',  this.pc.iceConnectionState);
+                    console.log('ICE state: ', this.pc.iceConnectionState);
             };
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);

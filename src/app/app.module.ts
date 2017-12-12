@@ -21,6 +21,7 @@ import {ExtendedHttpService} from '../providers/extended-http.service';
 import {HttpModule, Http} from '@angular/http';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
 import { Camera } from '@ionic-native/camera';
+import { Ionic2RatingModule } from 'ionic2-rating';
 
 @NgModule({
     declarations: [
@@ -38,7 +39,8 @@ import { Camera } from '@ionic-native/camera';
     imports: [
         BrowserModule,
         HttpModule,
-        IonicModule.forRoot(MyApp)
+        IonicModule.forRoot(MyApp),
+        Ionic2RatingModule
     ],
     bootstrap: [IonicApp],
     entryComponents: [

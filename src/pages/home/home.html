@@ -8,9 +8,26 @@
     <h2>Patient/Doctor Calling Prototype</h2>
     <button ion-button (click)="logout($event)">Logout</button>
     <button ion-button (click)="hangup()" *ngIf="call_status == 'In Progress'">End Call</button>
+    <ion-item>
+        <ion-label floating>Please select an audio source:</ion-label>
+        <ion-select type="select" [(ngModel)]="audio_device_id" (ionChange)="getUserMedia($event)">
+            <ion-option *ngFor="let audio_device of audio_devices" [value]="audio_device.id">
+                {{audio_device.label}}
+            </ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item>
+        <ion-label floating>Please select an video source:</ion-label>
+        <ion-select type="select" [(ngModel)]="video_device_id" (ionChange)="getUserMedia($event)">
+            <ion-option *ngFor="let video_device of video_devices" [value]="video_device.id">
+                {{video_device.label}}
+            </ion-option>
+        </ion-select>
+    </ion-item>
     <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
-        <ion-label>Evaluation</ion-label>
-        <ion-textarea [(ngModel)]="evaluation"></ion-textarea>
+        <rating [(ngModel)]="evaluation"></rating>
+    </ion-item>
+    <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
         <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
     </ion-item>
     <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
