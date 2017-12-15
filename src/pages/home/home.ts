@@ -3,6 +3,7 @@ import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
 import {Platform} from 'ionic-angular';
+import {NativeRingtones} from '@ionic-native/native-ringtones';
 
 declare var cordova: any;
 
@@ -19,8 +20,8 @@ export class HomePage {
     case_result: string = '';
     other_notes: string = '';
 
-    video_devices: Array<any>=new Array<any>();
-    audio_devices: Array<any>=new Array<any>();
+    video_devices: Array<any> = new Array<any>();
+    audio_devices: Array<any> = new Array<any>();
     audio_device_id: string;
     video_device_id: string;
 
@@ -50,13 +51,14 @@ export class HomePage {
     };
     socket: any = io.connect('https://fam-doc.com:8780/');
     constraints: any = {
-        audio: {deviceId: this.audio_device_id ? {exact: this.audio_device_id} : undefined},
-        video: {deviceId: this.video_device_id ? {exact: this.video_device_id} : undefined}
+        audio: true,
+        video: true
     };
+    ringtone: any;
 
     iceCandidates: any;
 
-    constructor(public navCtrl: NavController, public alertCtrl: AlertController,
+    constructor(public navCtrl: NavController, public alertCtrl: AlertController, private ringtones: NativeRingtones,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.case_id = navParams.get('case_id');
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
@@ -130,11 +132,17 @@ export class HomePage {
             });
     }
 
-    getUserMedia(){
+    getUserMedia() {
+        if (this.video_device_id)
+            this.constraints.video = {deviceId: this.video_device_id};
+        else
+            this.constraints.video = true;
+
+
         navigator.mediaDevices.getUserMedia(this.constraints)
             .then((stream) => {
                 console.log('Adding local stream.');
-                //document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
+                document.querySelector('#localVideo').setAttribute('src', window.URL.createObjectURL(stream));
                 this.localStream = stream;
                 this.sendMessage('got user media');
             })
@@ -153,10 +161,16 @@ export class HomePage {
                 for (var i = 0; i !== deviceInfos.length; ++i) {
                     var deviceInfo = deviceInfos[i];
 
-                    if (deviceInfo.kind === 'audioinput') {
-                        this.audio_devices.push({id: deviceInfo.deviceId, label: deviceInfo.label});
+                    if (deviceInfo.kind === 'audiooutput') {
+                        this.audio_devices.push({
+                            id: deviceInfo.deviceId,
+                            label: deviceInfo.label || ('Audio ' + (i + 1))
+                        });
                     } else if (deviceInfo.kind === 'videoinput') {
-                        this.video_devices.push({id: deviceInfo.deviceId, label: deviceInfo.label});
+                        this.video_devices.push({
+                            id: deviceInfo.deviceId,
+                            label: deviceInfo.label || ('Video ' + (i + 1))
+                        });
                     }
                 }
             });
@@ -177,7 +191,17 @@ export class HomePage {
             console.log('Another peer made a request to join room ' + room);
             console.log('This peer is the initiator of room ' + room + '!');
             this.isChannelReady = true;
-            this.maybeStart();
+
+            if(this.ringtone)
+                this.ringtones.playRingtone(this.ringtone);
+
+            var r = confirm("Accept call?");
+            if (r == true) {
+                this.maybeStart();
+            }
+
+            if(this.ringtone)
+                this.ringtones.stopRingtone(this.ringtone);
         });
 
         this.socket.on('joined', (room) => {
@@ -194,45 +218,40 @@ export class HomePage {
             if (message === 'got user media') {
                 //this.maybeStart();
             } else if (message.type === 'offer') {
-                let confirm = this.alertCtrl.create({
-                    title: 'Call received',
-                    subTitle: 'Start video call?',
-                    buttons: [
-                        {
-                            text: 'Yes',
-                            handler: () => {
-                                console.log('Call accepted');
-                                if (!this.isInitiator) {
-                                    this.maybeStart();
-                                }
+                if(this.ringtone)
+                    this.ringtones.playRingtone(this.ringtone);
 
-                                console.log('Setting remote description');
-                                this.pc.setRemoteDescription(new RTCSessionDescription(message));
+                var r = confirm("Accept call?");
 
-                                for (var i = 0; i < this.iceCandidates.length; i++) {
-                                    this.pc.addIceCandidate(this.iceCandidates[i]);
-                                }
+                if(this.ringtone)
+                    this.ringtones.stopRingtone(this.ringtone);
 
-                                console.log('Sending answer to peer.');
-                                this.pc.createAnswer().then(
-                                    (sessionDescription) => {
-                                        // Set Opus as the preferred codec in SDP if Opus is present.
-                                        //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
-                                        this.pc.setLocalDescription(sessionDescription);
-                                        console.log('setLocalAndSendMessage sending message', sessionDescription);
-                                        this.sendMessage(sessionDescription);
-                                    }, (error) => {
-                                        console.log('Failed to create session description: ' + error.toString());
-                                    }
-                                );
-                            }
-                        },
-                        {
-                            text: 'No'
+                if (r == true) {
+                    console.log('Call accepted');
+                    if (!this.isInitiator) {
+                        this.maybeStart();
+                    }
+
+                    console.log('Setting remote description');
+                    this.pc.setRemoteDescription(new RTCSessionDescription(message));
+
+                    for (var i = 0; i < this.iceCandidates.length; i++) {
+                        this.pc.addIceCandidate(this.iceCandidates[i]);
+                    }
+
+                    console.log('Sending answer to peer.');
+                    this.pc.createAnswer().then(
+                        (sessionDescription) => {
+                            // Set Opus as the preferred codec in SDP if Opus is present.
+                            //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
+                            this.pc.setLocalDescription(sessionDescription);
+                            console.log('setLocalAndSendMessage sending message', sessionDescription);
+                            this.sendMessage(sessionDescription);
+                        }, (error) => {
+                            console.log('Failed to create session description: ' + error.toString());
                         }
-                    ]
-                });
-                confirm.present();
+                    );
+                }
             } else if (message.type === 'answer') {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
             } else if (message.type === 'candidate') {
@@ -276,6 +295,12 @@ export class HomePage {
         window.onbeforeunload = () => {
             this.sendMessage('bye');
         };
+
+        if(document.URL.startsWith('file')) {
+            this.ringtones.getRingtone().then((ringtones) => {
+                this.ringtone = ringtones[0].Url;
+            });
+        }
     }
 
     sendMessage(message) {
@@ -337,6 +362,11 @@ export class HomePage {
             alert('Cannot create RTCPeerConnection object.');
             return;
         }
+    }
+
+    setAudioOutput() {
+        let tmp: any = document.querySelector('#remoteVideo');
+        tmp.setSinkId(this.audio_device_id);
     }
 
     handleCreateOfferError(event) {

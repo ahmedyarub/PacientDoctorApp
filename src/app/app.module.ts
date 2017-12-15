@@ -22,7 +22,9 @@ import {HttpModule, Http} from '@angular/http';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
 import { Camera } from '@ionic-native/camera';
 import { Ionic2RatingModule } from 'ionic2-rating';
+import { NativeRingtones } from '@ionic-native/native-ringtones';
 
+import { Push} from '@ionic-native/push';
 @NgModule({
     declarations: [
         MyApp,
@@ -61,7 +63,9 @@ import { Ionic2RatingModule } from 'ionic2-rating';
         {provide: ErrorHandler, useClass: IonicErrorHandler},
         {provide: Http, useClass: ExtendedHttpService},
         AndroidPermissions,
-        Camera
+        Camera,
+        NativeRingtones,
+        Push
     ]
 })
 export class AppModule {

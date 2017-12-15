@@ -5,7 +5,8 @@ import {Http} from '@angular/http';
 import 'rxjs/add/operator/map';
 import {TabsPage} from "../tabs/tabs";
 import {RegistrationPage} from "../registration/registration";
-import { AndroidPermissions } from '@ionic-native/android-permissions';
+import {AndroidPermissions} from '@ionic-native/android-permissions';
+import {Push, PushObject, PushOptions} from '@ionic-native/push';
 
 @IonicPage()
 @Component({
@@ -15,11 +16,23 @@ import { AndroidPermissions } from '@ionic-native/android-permissions';
 export class LoginPage {
     email: string;
     password: string;
+    push_id: string;
+
+    options: PushOptions = {
+        android: {
+            senderID: '63467285075'
+        },
+        ios: {
+            alert: 'true',
+            badge: true,
+            sound: 'false'
+        }
+    };
 
     constructor(public navCtrl: NavController,
-                public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController,
+                public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController, private push: Push,
                 public platform: Platform, public loadingCtrl: LoadingController, private androidPermissions: AndroidPermissions) {
-        if(document.URL.startsWith('file')) {
+        if (document.URL.startsWith('file')) {
             this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
                 success => console.log('Permission granted'),
                 err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)
@@ -32,6 +45,26 @@ export class LoginPage {
 
             this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO]);
         }
+
+        this.push.hasPermission()
+            .then((res: any) => {
+
+                if (res.isEnabled) {
+                    console.log('We have permission to send push notifications');
+                } else {
+                    console.log('We do not have permission to send push notifications');
+                }
+
+            });
+
+        const pushObject: PushObject = this.push.init(this.options);
+
+        pushObject.on('notification').subscribe((notification: any) => console.log('Received a notification', notification));
+
+        pushObject.on('registration').subscribe((registration: any) => {
+            console.log('Device registered', registration);
+            this.push_id = registration.registrationId;
+        });
 
         this.http.get('/localapi/validate_session',
             {}
@@ -51,6 +84,7 @@ export class LoginPage {
             {
                 email: this.email,
                 password: this.password,
+                push_id: this.push_id
             }
         )
             .map(res => res.json())

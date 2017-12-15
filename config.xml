@@ -12,6 +12,7 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <preference name="orientation" value="portrait" />
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
@@ -80,7 +81,6 @@
         <hook src="hooks/iosrtc-swift-support.js" type="after_platform_add" />
     </platform>
     <allow-navigation href="http://192.168.56.129:8100" />
-    <engine name="android" spec="6.3.0" />
     <plugin name="cordova-plugin-console" spec="^1.1.0" />
     <plugin name="cordova-plugin-device" spec="^1.1.7" />
     <plugin name="cordova-plugin-splashscreen" spec="^4.1.0" />
@@ -100,15 +100,21 @@
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.2" />
     <plugin name="cordova-plugin-file" spec="^5.0.0" />
     <plugin name="cordova-opentok-android-permissions" spec="^1.0.1" />
-    <engine name="ios" spec="~4.5.4" />
     <plugin name="cordova-plugin-camera" spec="^3.0.0" />
-    <edit-config target="NSCameraUsageDescription" file="*-Info.plist" mode="merge">
+    <edit-config file="*-Info.plist" mode="merge" target="NSCameraUsageDescription">
         <string>need camera access to make video calls</string>
     </edit-config>
-    <edit-config target="NSMicrophoneUsageDescription" file="*-Info.plist" mode="merge">
+    <edit-config file="*-Info.plist" mode="merge" target="NSMicrophoneUsageDescription">
         <string>need microphone access to make video calls</string>
     </edit-config>
-    <edit-config target="NSPhotoLibraryUsageDescription" file="*-Info.plist" mode="merge">
+    <edit-config file="*-Info.plist" mode="merge" target="NSPhotoLibraryUsageDescription">
         <string>need to photo library access to get pictures from there</string>
     </edit-config>
+    <plugin name="cordova-plugin-native-ringtones" spec="^0.2.5" />
+    <engine name="android" spec="~6.3.0" />
+    <engine name="ios" spec="~4.5.4" />
+    <plugin name="phonegap-plugin-push" spec="^2.1.2">
+        <variable name="SENDER_ID" value="63467285075" />
+        <variable name="FCM_VERSION" value="11.0.1" />
+    </plugin>
 </widget>

@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "63467285075",
+    "firebase_url": "https://famdoc-9bccf.firebaseio.com",
+    "project_id": "famdoc-9bccf",
+    "storage_bucket": "famdoc-9bccf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:63467285075:android:00bd519a99afc0b2",
+        "android_client_info": {
+          "package_name": "com.nordic.famdoc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "63467285075-17154mb9qo83oluk9djgo69gg0it1oug.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBVwew3s5QDwBRJNLP2i_T6XExgp_BiokU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

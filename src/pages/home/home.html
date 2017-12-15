@@ -3,14 +3,22 @@
         <ion-title>Home</ion-title>
     </ion-navbar>
 </ion-header>
-
+<style>
+    video{
+        min-width: 100%;
+        min-height: 100%;
+        width: 100%;
+        height: auto;
+        z-index: -100;
+    }
+</style>
 <ion-content padding>
     <h2>Patient/Doctor Calling Prototype</h2>
     <button ion-button (click)="logout($event)">Logout</button>
     <button ion-button (click)="hangup()" *ngIf="call_status == 'In Progress'">End Call</button>
     <ion-item>
-        <ion-label floating>Please select an audio source:</ion-label>
-        <ion-select type="select" [(ngModel)]="audio_device_id" (ionChange)="getUserMedia($event)">
+        <ion-label floating>Please select an audio output:</ion-label>
+        <ion-select type="select" [(ngModel)]="audio_device_id" (ionChange)="setAudioOutput($event)">
             <ion-option *ngFor="let audio_device of audio_devices" [value]="audio_device.id">
                 {{audio_device.label}}
             </ion-option>
@@ -36,10 +44,19 @@
     <ion-item *ngIf="user_type == 1">
         <button ion-button (click)="next_patient($event)">Next Patient</button>
     </ion-item>
-
+    <ion-item [hidden]="call_status != 'In Progress'">
+        <ion-label>Remote Video</ion-label>
+    </ion-item>
     <ion-item [hidden]="call_status != 'In Progress'">
         <video id="remoteVideo" autoplay></video>
     </ion-item>
+    <ion-item>
+        <ion-label>Your Video</ion-label>
+    </ion-item>
+    <ion-item>
+        <video id="localVideo" autoplay muted></video>
+    </ion-item>
+
     <ion-item>
         <ion-label>Case Number: {{case_id}}</ion-label>
     </ion-item>
