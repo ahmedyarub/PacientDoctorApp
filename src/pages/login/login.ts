@@ -44,27 +44,27 @@ export class LoginPage {
             );
 
             this.androidPermissions.requestPermissions([this.androidPermissions.PERMISSION.CAMERA, this.androidPermissions.PERMISSION.RECORD_AUDIO]);
-        }
 
-        this.push.hasPermission()
-            .then((res: any) => {
+            this.push.hasPermission()
+                .then((res: any) => {
 
-                if (res.isEnabled) {
-                    console.log('We have permission to send push notifications');
-                } else {
-                    console.log('We do not have permission to send push notifications');
-                }
+                    if (res.isEnabled) {
+                        console.log('We have permission to send push notifications');
+                    } else {
+                        console.log('We do not have permission to send push notifications');
+                    }
 
+                });
+
+            const pushObject: PushObject = this.push.init(this.options);
+
+            pushObject.on('notification').subscribe((notification: any) => console.log('Received a notification', notification));
+
+            pushObject.on('registration').subscribe((registration: any) => {
+                console.log('Device registered', registration);
+                this.push_id = registration.registrationId;
             });
-
-        const pushObject: PushObject = this.push.init(this.options);
-
-        pushObject.on('notification').subscribe((notification: any) => console.log('Received a notification', notification));
-
-        pushObject.on('registration').subscribe((registration: any) => {
-            console.log('Device registered', registration);
-            this.push_id = registration.registrationId;
-        });
+        }
 
         this.http.get('/localapi/validate_session',
             {}
