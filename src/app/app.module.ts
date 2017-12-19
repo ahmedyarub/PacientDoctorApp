@@ -5,6 +5,7 @@ import {MyApp} from './app.component';
 
 import {AboutPage} from '../pages/about/about';
 import {HomePage} from '../pages/home/home';
+import {CasesPage} from '../pages/cases/cases';
 import {TabsPage} from '../pages/tabs/tabs';
 import {RegistrationPage} from '../pages/registration/registration';
 
@@ -36,6 +37,7 @@ import { Push} from '@ionic-native/push';
         RegistrationPage,
         DoctorsPage,
         QueuePage,
+        CasesPage,
         KeysPipe
     ],
     imports: [
@@ -54,6 +56,7 @@ import { Push} from '@ionic-native/push';
         LoginPage,
         DoctorsPage,
         QueuePage,
+        CasesPage,
         RegistrationPage
     ],
     providers: [

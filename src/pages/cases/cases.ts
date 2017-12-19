@@ -1,13 +1,12 @@
 import {Component} from '@angular/core';
 import {NavController, NavParams} from 'ionic-angular';
 import {Http} from "@angular/http";
-import {QueuePage} from "../queue/queue";
 
 @Component({
-    selector: 'page-doctors',
-    templateUrl: 'doctors.html'
+    selector: 'page-cases',
+    templateUrl: 'cases.html'
 })
-export class DoctorsPage {
+export class CasesPage {
     cases: Map<number, string>;
     case_id: number;
     message: string;
@@ -17,8 +16,7 @@ export class DoctorsPage {
             .map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
-                    this.case_id = data.case_id;
-                    this.cases = data.doctors;
+                    this.cases = data.cases;
                 }
             });
     }
