@@ -59,7 +59,7 @@ export class LoginPage {
 
         const pushObject: PushObject = this.push.init(this.options);
 
-        pushObject.on('notification').subscribe((notification: any) => console.log('Received a notification', notification));
+        pushObject.on('notification').subscribe((notification: any) =>   alert(notification.message));
 
         pushObject.on('registration').subscribe((registration: any) => {
             console.log('Device registered', registration);
@@ -84,7 +84,8 @@ export class LoginPage {
             {
                 email: this.email,
                 password: this.password,
-                push_id: this.push_id
+                push_id: this.push_id,
+                platform: this.platform.is('ios') ? 'ios' : 'android'
             }
         )
             .map(res => res.json())

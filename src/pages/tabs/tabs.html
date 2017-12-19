@@ -1,3 +1,4 @@
 <ion-tabs>
-  <ion-tab [root]="tab1Root" tabTitle="Logged In" tabIcon="information-circle"></ion-tab>
+  <ion-tab [root]="tab1Root" tabTitle="Call" tabIcon="information-circle"></ion-tab>
+  <ion-tab [root]="tab2Root" tabTitle="Cases" *ng-if="user_type=='1'" tabIcon="information-circle"></ion-tab>
 </ion-tabs>

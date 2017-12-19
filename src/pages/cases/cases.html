@@ -1,0 +1,28 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Send Message
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>Casses</ion-list-header>
+    <ion-item>
+      <ion-label floating>Please select a case:</ion-label>
+      <ion-select type="select" [(ngModel)]="case_id">
+        <ion-option *ngFor="let case of cases" [value]="case.id">
+          {{case.name}}
+        </ion-option>
+      </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-textarea [(ngModel)]="message">
+      </ion-textarea>
+    </ion-item>
+    <ion-item>
+      <button ion-button (click)="send_mesage($event)">Send Message</button>
+    </ion-item>
+  </ion-list>
+</ion-content>
