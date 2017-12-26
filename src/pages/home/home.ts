@@ -7,6 +7,8 @@ import {NativeRingtones} from '@ionic-native/native-ringtones';
 
 declare var cordova: any;
 
+var temp;
+
 @Component({
     selector: 'page-home',
     templateUrl: 'home.html'
@@ -19,6 +21,8 @@ export class HomePage {
     notes: string = '';
     case_result: string = '';
     other_notes: string = '';
+
+    cases: Array<any> = new Array<any>();
 
     video_devices: Array<any> = new Array<any>();
     audio_devices: Array<any> = new Array<any>();
@@ -62,6 +66,26 @@ export class HomePage {
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.case_id = navParams.get('case_id');
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
+    }
+
+    call($event) {
+        this.socket.emit('create or join', this.case_id);
+        console.log('Attempted to create or  join room', this.case_id);
+    }
+
+    select_case($event) {
+        this.http.get('/localapi/queue/case_data?case_id=' +this.case_id)
+            .map(res => res.json())
+            .subscribe(data => {
+                this.iceCandidates = new Array();
+                if (data.status === 0) {
+                    this.case_id = data.case_id;
+                    this.question_answer = data.question_answer;
+                    this.photo = data.image;
+                } else {
+                    alert('No more cases available!');
+                }
+            });
     }
 
     submit_evaluation($event) {
@@ -113,25 +137,6 @@ export class HomePage {
             });
     }
 
-    next_patient($event) {
-        this.http.post("/localapi/queue/next_patient", {
-            case_id: this.case_id
-        }).map(res => res.json())
-            .subscribe(data => {
-                this.iceCandidates = new Array();
-                if (data.status === 0) {
-                    this.case_id = data.case_id;
-                    this.question_answer = data.question_answer;
-                    this.photo = data.image;
-                    alert('Case starting: ' + data.case_id);
-                    this.socket.emit('create or join', this.case_id);
-                    console.log('Attempted to create or  join room', this.case_id);
-                } else {
-                    alert('No more cases available!');
-                }
-            });
-    }
-
     getUserMedia() {
         if (this.video_device_id)
             this.constraints.video = {deviceId: this.video_device_id};
@@ -151,7 +156,27 @@ export class HomePage {
             });
     }
 
+
+    update_cases() {
+        temp.http.get('/localapi/doctors/waiting_patients')
+            .map(res => res.json())
+            .subscribe(data => {
+                if (data.status == 0) {
+                    if (temp.cases.length != data.cases.length) {
+                        temp.cases = data.cases;
+
+                        alert('Cases updated!');
+                    }
+                }
+
+                setTimeout(temp.update_cases, 5000);
+            });
+    }
+
     ionViewDidLoad() {
+        temp = this;
+        this.update_cases();
+
         if (this.plt.is('ios')) {
             cordova.plugins.iosrtc.registerGlobals();
         }
@@ -192,7 +217,7 @@ export class HomePage {
             console.log('This peer is the initiator of room ' + room + '!');
             this.isChannelReady = true;
 
-            if(this.ringtone)
+            if (this.ringtone)
                 this.ringtones.playRingtone(this.ringtone);
 
             var r = confirm("Accept call?");
@@ -200,7 +225,7 @@ export class HomePage {
                 this.maybeStart();
             }
 
-            if(this.ringtone)
+            if (this.ringtone)
                 this.ringtones.stopRingtone(this.ringtone);
         });
 
@@ -218,12 +243,12 @@ export class HomePage {
             if (message === 'got user media') {
                 //this.maybeStart();
             } else if (message.type === 'offer') {
-                if(this.ringtone)
+                if (this.ringtone)
                     this.ringtones.playRingtone(this.ringtone);
 
                 var r = confirm("Accept call?");
 
-                if(this.ringtone)
+                if (this.ringtone)
                     this.ringtones.stopRingtone(this.ringtone);
 
                 if (r == true) {
@@ -296,7 +321,7 @@ export class HomePage {
             this.sendMessage('bye');
         };
 
-        if(document.URL.startsWith('file')) {
+        if (document.URL.startsWith('file')) {
             this.ringtones.getRingtone().then((ringtones) => {
                 this.ringtone = ringtones[0].Url;
             });

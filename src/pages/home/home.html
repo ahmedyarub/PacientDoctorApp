@@ -16,6 +16,15 @@
     <h2>Patient/Doctor Calling Prototype</h2>
     <button ion-button (click)="logout($event)">Logout</button>
     <button ion-button (click)="hangup()" *ngIf="call_status == 'In Progress'">End Call</button>
+    <button ion-button (click)="call()" *ngIf="call_status == 'Pending' && case_id">Call</button>
+    <ion-item [hidden]="user_type == 0">
+        <ion-label floating>Please select a case:</ion-label>
+        <ion-select type="select" [(ngModel)]="case_id" (ionChange)="select_case($event)">
+            <ion-option *ngFor="let case of cases" [value]="case.id">
+                {{case.name}}
+            </ion-option>
+        </ion-select>
+    </ion-item>
     <ion-item>
         <ion-label floating>Please select an audio output:</ion-label>
         <ion-select type="select" [(ngModel)]="audio_device_id" (ionChange)="setAudioOutput($event)">
@@ -37,12 +46,6 @@
     </ion-item>
     <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
         <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
-    </ion-item>
-    <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
-        <button ion-button (click)="submit_evaluation($event)">Submit Evaluation</button>
-    </ion-item>
-    <ion-item *ngIf="user_type == 1">
-        <button ion-button (click)="next_patient($event)">Next Patient</button>
     </ion-item>
     <ion-item [hidden]="call_status != 'In Progress'">
         <ion-label>Remote Video</ion-label>
@@ -78,7 +81,7 @@
     <ion-item *ngIf="user_type == 0 && (call_status == 'In Progress' || call_status == 'Finished')">
         <button ion-button (click)="receive_notes($event)">Receive Notes</button>
     </ion-item>
-    <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished')">
+    <ion-item *ngIf="user_type == 1 && call_status == 'Finished'">
         <ion-label>Were you able to help the patient?</ion-label>
         <ion-select [(ngModel)]="case_result">
             <ion-option value="yes">Yes</ion-option>
@@ -86,7 +89,7 @@
             <ion-option value="other">other</ion-option>
         </ion-select>
     </ion-item>
-    <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished') && case_result=='other'">
+    <ion-item *ngIf="user_type == 1 && (call_status == 'Finished') && case_result=='other'">
         <ion-textarea [(ngModel)]="other_notes"></ion-textarea>
     </ion-item>
     <ion-item *ngIf="user_type == 1 && (call_status == 'Finished')">
