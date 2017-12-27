@@ -21,11 +21,12 @@ import {QueuePage} from "../pages/queue/queue";
 import {ExtendedHttpService} from '../providers/extended-http.service';
 import {HttpModule, Http} from '@angular/http';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
-import { Camera } from '@ionic-native/camera';
-import { Ionic2RatingModule } from 'ionic2-rating';
-import { NativeRingtones } from '@ionic-native/native-ringtones';
+import {Camera} from '@ionic-native/camera';
+import {Ionic2RatingModule} from 'ionic2-rating';
+import {NativeRingtones} from '@ionic-native/native-ringtones';
 
-import { Push} from '@ionic-native/push';
+import {Push} from '@ionic-native/push';
+
 @NgModule({
     declarations: [
         MyApp,

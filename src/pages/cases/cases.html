@@ -1,28 +1,32 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Send Message
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>
+            Send Message
+        </ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-list-header>Casses</ion-list-header>
-    <ion-item>
-      <ion-label floating>Please select a case:</ion-label>
-      <ion-select type="select" [(ngModel)]="case_id">
-        <ion-option *ngFor="let case of cases" [value]="case.id">
-          {{case.name}}
-        </ion-option>
-      </ion-select>
-    </ion-item>
-    <ion-item>
-      <ion-textarea [(ngModel)]="message">
-      </ion-textarea>
-    </ion-item>
-    <ion-item>
-      <button ion-button (click)="send_message($event)">Send Message</button>
-    </ion-item>
-  </ion-list>
+    <ion-list>
+        <ion-list-header>Casses</ion-list-header>
+        <ion-item>
+            <ion-label floating>Please select a case:</ion-label>
+            <ion-select type="select" [(ngModel)]="case_id" (ionChange)="select_case($event)">
+                <ion-option *ngFor="let case of cases" [value]="case.id">
+                    {{case.name}}
+                </ion-option>
+            </ion-select>
+        </ion-item>
+        <ion-item ng-show="user_type=='1'">
+            <ion-textarea [(ngModel)]="message">
+            </ion-textarea>
+        </ion-item>
+        <ion-item ng-show="user_type=='1'">
+            <button ion-button (click)="send_message($event)">Send Message</button>
+        </ion-item>
+        <ion-item>
+            <ion-label [innerHTML]="question_answer"></ion-label>
+        </ion-item>
+        <ion-img width="100%" height="100%" src="{{photo}}"></ion-img>
+    </ion-list>
 </ion-content>
