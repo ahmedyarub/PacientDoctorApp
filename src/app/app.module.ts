@@ -26,6 +26,7 @@ import {Ionic2RatingModule} from 'ionic2-rating';
 import {NativeRingtones} from '@ionic-native/native-ringtones';
 
 import {Push} from '@ionic-native/push';
+import {ProfilePage} from "../pages/profile/profile";
 
 @NgModule({
     declarations: [
@@ -39,6 +40,7 @@ import {Push} from '@ionic-native/push';
         DoctorsPage,
         QueuePage,
         CasesPage,
+        ProfilePage,
         KeysPipe
     ],
     imports: [
@@ -58,6 +60,7 @@ import {Push} from '@ionic-native/push';
         DoctorsPage,
         QueuePage,
         CasesPage,
+        ProfilePage,
         RegistrationPage
     ],
     providers: [

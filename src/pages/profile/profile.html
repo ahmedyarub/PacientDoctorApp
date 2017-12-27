@@ -1,0 +1,67 @@
+<ion-header>
+
+    <ion-navbar>
+        <ion-title>Profile</ion-title>
+    </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+    <ion-item>
+        <ion-label floating>Name</ion-label>
+        <ion-input type="text" [(ngModel)]="registration_data.name"
+                   (ionBlur)="formattingService.formata_campo($event, 'name')"></ion-input>
+    </ion-item>
+
+    <ion-card *ngIf="user_type==1">
+        <ion-item>
+            <ion-label floating>Address</ion-label>
+            <ion-input type="text" [(ngModel)]="registration_data.address"></ion-input>
+        </ion-item>
+        <ion-item>
+            <ion-label floating>Specialization</ion-label>
+            <ion-input type="text" [(ngModel)]="registration_data.specialization"></ion-input>
+        </ion-item>
+    </ion-card>
+
+    <ion-card *ngIf="user_type==0">
+        <ion-item>
+            <ion-label floating>State</ion-label>
+            <ion-input type="text" [(ngModel)]="registration_data.state"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label floating>City</ion-label>
+            <ion-input type="text" [(ngModel)]="registration_data.city"></ion-input>
+        </ion-item>
+
+        <ion-item>
+            <ion-label floating>Gender</ion-label>
+            <ion-input type="text" [(ngModel)]="registration_data.genre"></ion-input>
+        </ion-item>
+    </ion-card>
+
+    <ion-item>
+        <ion-label floating>E-mail</ion-label>
+        <ion-input type="text" value="" ng-readonly="" [(ngModel)]="registration_data.email"></ion-input>
+    </ion-item>
+
+    <ion-item>
+        <ion-label floating>Telefone</ion-label>
+        <ion-input type="text" [(ngModel)]="registration_data.phone" (ionBlur)="formattingService.formata_campo($event, 'celular')"></ion-input>
+    </ion-item>
+</ion-content>
+
+<ion-footer>
+    <ion-grid>
+        <ion-row justify-content-center>
+            <ion-col col-12>
+                <button ion-button small color="secondary" (click)="submit()" push-8>
+                    <ion-icon name="ios-checkmark-circle-outline">&nbsp;</ion-icon>
+                    Submit
+                </button>
+            </ion-col>
+        </ion-row>
+    </ion-grid>
+</ion-footer>

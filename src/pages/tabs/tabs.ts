@@ -5,6 +5,7 @@ import {HomePage} from '../home/home';
 import {LoginPage} from "../login/login";
 import {Events, NavController} from "ionic-angular";
 import {CasesPage} from "../cases/cases";
+import {ProfilePage} from "../profile/profile";
 
 @Component({
     templateUrl: 'tabs.html'
@@ -13,6 +14,7 @@ export class TabsPage {
 
     tab1Root: any = null;
     tab2Root: any = CasesPage;
+    tab3Root: any = ProfilePage;
     user_type: string;
 
     constructor(public navCtrl: NavController, public events: Events) {
