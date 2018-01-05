@@ -1,39 +1,13 @@
 import {Component} from '@angular/core';
-
-import {QuestionsPage} from '../questions/questions';
-import {HomePage} from '../home/home';
-import {LoginPage} from "../login/login";
-import {AlertController, Events, NavController} from "ionic-angular";
-import {CasesPage} from "../cases/cases";
-import {ProfilePage} from "../profile/profile";
+import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
 import {Http} from "@angular/http";
-import {LogoutPage} from "../logout/logout";
 
 @Component({
-    templateUrl: 'tabs.html'
+    selector: 'page-logout',
+    templateUrl: 'logout.html'
 })
-export class TabsPage {
-
-    tab1Root: any = null;
-    tab2Root: any = CasesPage;
-    tab3Root: any = ProfilePage;
-    tab4Root: any = LogoutPage;
-    user_type: string;
-
-    constructor(public navCtrl: NavController, public events: Events, public http: Http, public alertCtrl: AlertController) {
-        this.user_type = window.localStorage.getItem("USER_TYPE");
-
-        events.subscribe('user:logout', () => {
-            navCtrl.setRoot(LoginPage);
-        });
-
-        if (this.user_type == '1')
-            this.tab1Root = HomePage;
-        else
-            this.tab1Root = QuestionsPage;
-    }
-
-    logout(event) {
+export class LogoutPage {
+    constructor(public navCtrl: NavController, public http: Http, public navParams: NavParams, public alertCtrl: AlertController, public events: Events) {
         this.http.post('/localapi/logout',
             {}
         )

@@ -14,30 +14,13 @@
 </style>
 <ion-content padding>
     <h2>Patient/Doctor Calling Prototype</h2>
-    <button ion-button (click)="logout($event)">Logout</button>
-    <button ion-button (click)="hangup()" *ngIf="call_status == 'In Progress'">End Call</button>
-    <button ion-button (click)="call()" *ngIf="call_status == 'Pending' && case_id">Call</button>
+    <button ion-button (click)="hangup()" [hidden]="user_type == 0 || call_status != 'In Progress'">End Call</button>
+    <button ion-button (click)="call()" [hidden]="user_type == 0 || call_status != 'Pending' || !case_id">Call</button>
     <ion-item [hidden]="user_type == 0">
         <ion-label floating>Please select a case:</ion-label>
         <ion-select type="select" [(ngModel)]="case_id" (ionChange)="select_case($event)">
             <ion-option *ngFor="let case of cases" [value]="case.id">
                 {{case.name}}
-            </ion-option>
-        </ion-select>
-    </ion-item>
-    <ion-item>
-        <ion-label floating>Please select an audio output:</ion-label>
-        <ion-select type="select" [(ngModel)]="audio_device_id" (ionChange)="setAudioOutput($event)">
-            <ion-option *ngFor="let audio_device of audio_devices" [value]="audio_device.id">
-                {{audio_device.label}}
-            </ion-option>
-        </ion-select>
-    </ion-item>
-    <ion-item>
-        <ion-label floating>Please select an video source:</ion-label>
-        <ion-select type="select" [(ngModel)]="video_device_id" (ionChange)="getUserMedia($event)">
-            <ion-option *ngFor="let video_device of video_devices" [value]="video_device.id">
-                {{video_device.label}}
             </ion-option>
         </ion-select>
     </ion-item>
@@ -51,13 +34,13 @@
         <ion-label>Remote Video</ion-label>
     </ion-item>
     <ion-item [hidden]="call_status != 'In Progress'">
-        <video id="remoteVideo" autoplay></video>
+        <video id="remoteVideo" autoplay playsinline></video>
     </ion-item>
     <ion-item>
         <ion-label>Your Video</ion-label>
     </ion-item>
     <ion-item>
-        <video id="localVideo" autoplay muted></video>
+        <video id="localVideo" autoplay muted playsinline></video>
     </ion-item>
 
     <ion-item>
@@ -72,7 +55,7 @@
         <ion-textarea [(ngModel)]="notes"></ion-textarea>
     </ion-item>
     <ion-item *ngIf="user_type == 1 && (call_status == 'In Progress' || call_status == 'Finished')">
-        <button ion-button (click)="submit_notes($event)">Submit Notes</button>
+        <button ion-button (click)="submit_notes($event)">Save Notes</button>
     </ion-item>
     <ion-item *ngIf="user_type == 0 && (call_status == 'In Progress' || call_status == 'Finished')">
         <ion-label>Notes</ion-label>
@@ -94,5 +77,24 @@
     </ion-item>
     <ion-item *ngIf="user_type == 1 && (call_status == 'Finished')">
         <button ion-button (click)="submit_result($event)">Send Result</button>
+    </ion-item>
+    <ion-item>
+        <button ion-button (click)="toggle_configuration($event)">Configuration</button>
+    </ion-item>
+    <ion-item [hidden]="!show_configuration">
+        <ion-label floating>Please select an audio output:</ion-label>
+        <ion-select type="select" [(ngModel)]="audio_device_id" (ionChange)="setAudioOutput($event)">
+            <ion-option *ngFor="let audio_device of audio_devices" [value]="audio_device.id">
+                {{audio_device.label}}
+            </ion-option>
+        </ion-select>
+    </ion-item>
+    <ion-item [hidden]="!show_configuration">
+        <ion-label floating>Please select an video source:</ion-label>
+        <ion-select type="select" [(ngModel)]="video_device_id" (ionChange)="getUserMedia($event)">
+            <ion-option *ngFor="let video_device of video_devices" [value]="video_device.id">
+                {{video_device.label}}
+            </ion-option>
+        </ion-select>
     </ion-item>
 </ion-content>

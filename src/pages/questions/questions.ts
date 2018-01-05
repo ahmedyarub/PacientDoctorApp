@@ -79,11 +79,11 @@ export class QuestionsPage {
         var formData = new FormData();
 
         this.answers.forEach((value: number, key: number) => {
-            formData.append('answers[' + key.toString() + ']', value == null ? '' : String(value));
+            formData.append('answers[' + key.toString() + ']', this.answers[key] == null ? '' : String(this.answers[key]));
         });
 
         this.written_answers.forEach((value: string, key: number) => {
-            formData.append('written_answers[' + key + ']', value == null ? '' : String(value));
+            formData.append('written_answers[' + key + ']', this.written_answers[key] == null ? '' : String(this.written_answers[key]));
         });
 
         formData.append('category_id', this.category_id.toString());

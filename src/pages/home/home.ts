@@ -14,6 +14,8 @@ var temp;
     templateUrl: 'home.html'
 })
 export class HomePage {
+    show_configuration: boolean = false;
+
     evaluation: number = 5;
     case_id: number = null;
     question_answer: string = '';
@@ -64,8 +66,15 @@ export class HomePage {
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController, private ringtones: NativeRingtones,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
-        this.case_id = navParams.get('case_id');
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
+
+        if(this.user_type==0){
+            this.case_id = navParams.get('case_id');
+        }
+    }
+
+    toggle_configuration($event){
+        this.show_configuration= !this.show_configuration;
     }
 
     call($event) {
@@ -77,9 +86,9 @@ export class HomePage {
         this.http.get('/localapi/queue/case_data?case_id=' +this.case_id)
             .map(res => res.json())
             .subscribe(data => {
+                this.call_status = 'Pending';
                 this.iceCandidates = new Array();
                 if (data.status === 0) {
-                    this.case_id = data.case_id;
                     this.question_answer = data.question_answer;
                     this.photo = data.image;
                 } else {
@@ -107,7 +116,7 @@ export class HomePage {
         }).map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
-                    alert('Notes submitted successfully!');
+                    alert('Notes saved successfully!');
                 }
             });
     }
@@ -175,7 +184,9 @@ export class HomePage {
 
     ionViewDidLoad() {
         temp = this;
-        this.update_cases();
+        if (window.localStorage.getItem("USER_TYPE") != '0') {
+            this.update_cases();
+        }
 
         if (this.plt.is('ios')) {
             cordova.plugins.iosrtc.registerGlobals();
@@ -538,33 +549,4 @@ export class HomePage {
         sdpLines[mLineIndex] = mLineElements.join(' ');
         return sdpLines;
     }
-
-    logout(event) {
-        this.http.post('/localapi/logout',
-            {}
-        )
-            .map(res => res.json())
-            .subscribe(data => {
-
-                    if (data.status === 0) {
-                        this.events.publish('user:logout');
-                    } else {
-                        let alert = this.alertCtrl.create({
-                            title: 'Error!',
-                            subTitle: 'Error logging out!',
-                            buttons: ['OK']
-                        });
-                        alert.present();
-                    }
-                },
-                err => {
-                    let alert = this.alertCtrl.create({
-                        title: 'Erro!',
-                        subTitle: 'Communication error!',
-                        buttons: ['OK']
-                    });
-                    alert.present();
-                });
-    }
-
 }

@@ -27,6 +27,7 @@ import {NativeRingtones} from '@ionic-native/native-ringtones';
 
 import {Push} from '@ionic-native/push';
 import {ProfilePage} from "../pages/profile/profile";
+import {LogoutPage} from "../pages/logout/logout";
 
 @NgModule({
     declarations: [
@@ -41,6 +42,7 @@ import {ProfilePage} from "../pages/profile/profile";
         QueuePage,
         CasesPage,
         ProfilePage,
+        LogoutPage,
         KeysPipe
     ],
     imports: [
@@ -61,6 +63,7 @@ import {ProfilePage} from "../pages/profile/profile";
         QueuePage,
         CasesPage,
         ProfilePage,
+        LogoutPage,
         RegistrationPage
     ],
     providers: [

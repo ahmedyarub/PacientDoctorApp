@@ -1,10 +1,8 @@
 import {Component} from '@angular/core';
-import {AlertController, NavController, NavParams, LoadingController} from 'ionic-angular';
+import {AlertController, NavController, LoadingController} from 'ionic-angular';
 import {RegistrationModel} from "../../models/registration-model";
-import {FormBuilder, FormGroup} from '@angular/forms';
 import {FormattingService} from "../../providers/formatting-service";
 import {Http, ResponseContentType} from '@angular/http';
-import {LoginPage} from "../login/login";
 
 @Component({
     selector: 'page-registration',

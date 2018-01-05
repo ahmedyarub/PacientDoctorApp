@@ -1,36 +1,44 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>
-      Questions
-    </ion-title>
-  </ion-navbar>
+    <ion-navbar>
+        <ion-title>
+            Questions
+        </ion-title>
+    </ion-navbar>
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-list-header>Categories</ion-list-header>
-    <ion-item>
-      <ion-label floating>Please select a category:</ion-label>
-      <ion-select type="select" [(ngModel)]="category_id" (ionChange)="categoryChange($event)">
-        <ion-option *ngFor="let category of categories" [value]="category.id">
-          {{category.category}}
-        </ion-option>
-      </ion-select>
-    </ion-item>
-    <ion-item *ngFor="let question of questions">
-      <ion-label floating>{{question.question}}</ion-label>
-      <ion-select type="select" [(ngModel)]="answers[question.id]" *ngIf="question.choices == 1">
-        <ion-option *ngFor="let answer of question.answers | keys" [value]="answer.key">
-          {{answer.value}}
-        </ion-option>
-      </ion-select>
-      <ion-textarea [(ngModel)]="written_answers[question.id]" *ngIf="question.text == 1"></ion-textarea>
-    </ion-item>
-    <ion-item>
-      <button ion-button (click)="takePhoto()">Choose a photo</button>
-    </ion-item>
-    <ion-item>
-      <button ion-button (click)="answer()">Send</button>
-    </ion-item>
-  </ion-list>
+    <ion-list>
+        <ion-list-header>Categories</ion-list-header>
+        <ion-item>
+            <ion-label floating>Please select a category:</ion-label>
+            <ion-select type="select" [(ngModel)]="category_id" (ionChange)="categoryChange($event)">
+                <ion-option *ngFor="let category of categories" [value]="category.id">
+                    {{category.category}}
+                </ion-option>
+            </ion-select>
+        </ion-item>
+        <ion-list *ngFor="let question of questions">
+            <ion-item>
+                <ion-label>{{question.question}}</ion-label>
+            </ion-item>
+            <ion-item *ngIf="question.choices == 1">
+                <ion-label floating>Please select an answer</ion-label>
+                <ion-select type="select" [(ngModel)]="answers[question.id]">
+                    <ion-option *ngFor="let answer of question.answers | keys" [value]="answer.key">
+                        {{answer.value}}
+                    </ion-option>
+                </ion-select>
+            </ion-item>
+            <ion-item *ngIf="question.choices == 1">
+                <ion-label floating>Please write a description of the answer</ion-label>
+                <ion-textarea [(ngModel)]="written_answers[question.id]" *ngIf="question.text == 1"></ion-textarea>
+            </ion-item>
+        </ion-list>
+        <ion-item>
+            <button ion-button (click)="takePhoto()">Choose a photo</button>
+        </ion-item>
+        <ion-item>
+            <button ion-button (click)="answer()">Send</button>
+        </ion-item>
+    </ion-list>
 </ion-content>
