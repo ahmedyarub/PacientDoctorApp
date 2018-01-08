@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {AlertController, Events, NavController, NavParams} from 'ionic-angular';
+import {Component, ViewChild} from '@angular/core';
+import {AlertController, Content, Events, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
 import {Platform} from 'ionic-angular';
@@ -14,6 +14,8 @@ var temp;
     templateUrl: 'home.html'
 })
 export class HomePage {
+    @ViewChild(Content) content: Content;
+
     show_configuration: boolean = false;
 
     evaluation: number = 5;
@@ -190,6 +192,18 @@ export class HomePage {
 
         if (this.plt.is('ios')) {
             cordova.plugins.iosrtc.registerGlobals();
+
+            setInterval(() => {
+                if(document.getElementsByTagName("ion-alert").length!=0) {
+                    document.getElementById("remoteVideo").style.zIndex = "-1";
+                    document.getElementById("localVideo").style.zIndex = "-1";
+                }else{
+                    document.getElementById("remoteVideo").style.zIndex = "1";
+                    document.getElementById("localVideo").style.zIndex = "1";
+                }
+
+                cordova.plugins.iosrtc.refreshVideos();
+            }, 1000);
         }
 
         navigator.mediaDevices.enumerateDevices()
