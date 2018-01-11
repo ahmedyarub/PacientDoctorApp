@@ -1,6 +1,6 @@
 <ion-tabs>
   <ion-tab [root]="tab1Root" tabTitle="Call" tabIcon="information-circle"></ion-tab>
-  <ion-tab [root]="tab2Root" tabTitle="Cases" tabIcon="information-circle"></ion-tab>
-  <ion-tab [root]="tab3Root" tabTitle="Profile" tabIcon="information-circle"></ion-tab>
-  <ion-tab [root]="tab4Root" tabTitle="logout" tabIcon="information-circle" ></ion-tab>
+  <ion-tab [root]="tab2Root" *ngIf="user_type==1" tabTitle="Cases" tabIcon="information-circle"></ion-tab>
+  <ion-tab [root]="tab3Root" *ngIf="true" tabTitle="Profile" tabIcon="information-circle"></ion-tab>
+  <ion-tab [root]="tab4Root" *ngIf="true" tabTitle="logout" tabIcon="information-circle" ></ion-tab>
 </ion-tabs>

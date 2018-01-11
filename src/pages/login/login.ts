@@ -17,6 +17,7 @@ export class LoginPage {
     email: string;
     password: string;
     push_id: string;
+    showPassword: boolean = false;
 
     options: PushOptions = {
         android: {

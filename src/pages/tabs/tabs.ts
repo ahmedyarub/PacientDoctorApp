@@ -24,7 +24,7 @@ export class TabsPage {
         this.user_type = window.localStorage.getItem("USER_TYPE");
 
         events.subscribe('user:logout', () => {
-            navCtrl.setRoot(LoginPage);
+            location.reload();
         });
 
         if (this.user_type == '1')

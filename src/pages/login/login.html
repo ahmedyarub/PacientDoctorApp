@@ -17,11 +17,20 @@
         <ion-input type="email" value="" [(ngModel)]="email"></ion-input>
     </ion-item>
 
-    <ion-item>
-        <ion-label floating>Password</ion-label>
+   <ion-item [hidden]="showPassword" >
+       <ion-label floating>Password</ion-label>
         <ion-input type="password" [(ngModel)]="password"></ion-input>
     </ion-item>
 
+    <ion-item [hidden]="!showPassword" >
+        <ion-label floating>Password</ion-label>
+        <ion-input type="text" [(ngModel)]="password"></ion-input>
+    </ion-item>
+
+    <ion-item>
+        <ion-label>Show Password</ion-label>
+        <ion-checkbox [(ngModel)]="showPassword"></ion-checkbox>
+    </ion-item>
     <ion-item>
         <button ion-button (click)="login()">Login</button><br>
         <button ion-button (click)="forgot_password()">Forgot Password</button><br>
