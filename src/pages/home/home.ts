@@ -16,7 +16,9 @@ var temp;
 export class HomePage {
     @ViewChild(Content) content: Content;
 
+    tabBarElement: any;
     show_configuration: boolean = false;
+    interval: number;
 
     evaluation: number = 5;
     case_id: number = null;
@@ -25,6 +27,7 @@ export class HomePage {
     notes: string = '';
     case_result: string = '';
     other_notes: string = '';
+    message: string;
 
     cases: Array<any> = new Array<any>();
 
@@ -70,13 +73,33 @@ export class HomePage {
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
 
-        if(this.user_type==0){
+        if (this.user_type == 0) {
+            this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
             this.case_id = navParams.get('case_id');
         }
     }
 
-    toggle_configuration($event){
-        this.show_configuration= !this.show_configuration;
+    send_message($event) {
+        this.http.post("/localapi/doctors/send_message", {
+            case_id: this.case_id,
+            message: this.message
+        }).map(res => res.json())
+            .subscribe(data => {
+                if (data.status === 0) {
+                    alert('Message sent successfully!');
+                } else {
+                    alert('Error sending message!');
+                }
+            });
+    }
+
+    toggle_configuration($event) {
+        this.show_configuration = !this.show_configuration;
+
+        setTimeout(() => {
+            let dimensions = this.content.getContentDimensions();
+            this.content.scrollTo(0, dimensions.contentHeight, 0.5);
+        }, 500);
     }
 
     call($event) {
@@ -85,7 +108,7 @@ export class HomePage {
     }
 
     select_case($event) {
-        this.http.get('/localapi/queue/case_data?case_id=' +this.case_id)
+        this.http.get('/localapi/queue/case_data?case_id=' + this.case_id)
             .map(res => res.json())
             .subscribe(data => {
                 this.call_status = 'Pending';
@@ -118,7 +141,7 @@ export class HomePage {
         }).map(res => res.json())
             .subscribe(data => {
                 if (data.status === 0) {
-                    alert('Notes saved successfully!');
+                    alert('Journal saved successfully!');
                 }
             });
     }
@@ -143,7 +166,7 @@ export class HomePage {
             .subscribe(data => {
                 if (data.status === 0) {
                     this.notes = data.data;
-                    alert('Notes received successfully!');
+                    alert('Journal received successfully!');
                 }
             });
     }
@@ -193,11 +216,11 @@ export class HomePage {
         if (this.plt.is('ios')) {
             cordova.plugins.iosrtc.registerGlobals();
 
-            setInterval(() => {
-                if(document.getElementsByTagName("ion-alert").length!=0) {
+            this.interval = setInterval(() => {
+                if (document.getElementsByTagName("ion-alert").length != 0) {
                     document.getElementById("remoteVideo").style.zIndex = "-1";
                     document.getElementById("localVideo").style.zIndex = "-1";
-                }else{
+                } else {
                     document.getElementById("remoteVideo").style.zIndex = "1";
                     document.getElementById("localVideo").style.zIndex = "1";
                 }
@@ -240,18 +263,21 @@ export class HomePage {
         this.socket.on('join', (room) => {
             console.log('Another peer made a request to join room ' + room);
             console.log('This peer is the initiator of room ' + room + '!');
-            this.isChannelReady = true;
 
-            if (this.ringtone)
-                this.ringtones.playRingtone(this.ringtone);
+            if(!this.isStarted) {
+                this.isChannelReady = true;
 
-            var r = confirm("Accept call?");
-            if (r == true) {
-                this.maybeStart();
+                if (this.ringtone)
+                    this.ringtones.playRingtone(this.ringtone);
+
+                var r = confirm("Accept call?");
+                if (r == true) {
+                    this.maybeStart();
+                }
+
+                if (this.ringtone)
+                    this.ringtones.stopRingtone(this.ringtone);
             }
-
-            if (this.ringtone)
-                this.ringtones.stopRingtone(this.ringtone);
         });
 
         this.socket.on('joined', (room) => {
@@ -271,37 +297,37 @@ export class HomePage {
                 if (this.ringtone)
                     this.ringtones.playRingtone(this.ringtone);
 
-                var r = confirm("Accept call?");
+                //var r = confirm("Accept call?");
 
                 if (this.ringtone)
                     this.ringtones.stopRingtone(this.ringtone);
 
-                if (r == true) {
-                    console.log('Call accepted');
-                    if (!this.isInitiator) {
-                        this.maybeStart();
-                    }
-
-                    console.log('Setting remote description');
-                    this.pc.setRemoteDescription(new RTCSessionDescription(message));
-
-                    for (var i = 0; i < this.iceCandidates.length; i++) {
-                        this.pc.addIceCandidate(this.iceCandidates[i]);
-                    }
-
-                    console.log('Sending answer to peer.');
-                    this.pc.createAnswer().then(
-                        (sessionDescription) => {
-                            // Set Opus as the preferred codec in SDP if Opus is present.
-                            //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
-                            this.pc.setLocalDescription(sessionDescription);
-                            console.log('setLocalAndSendMessage sending message', sessionDescription);
-                            this.sendMessage(sessionDescription);
-                        }, (error) => {
-                            console.log('Failed to create session description: ' + error.toString());
-                        }
-                    );
+                //if (r == true) {
+                console.log('Call accepted');
+                if (!this.isInitiator) {
+                    this.maybeStart();
                 }
+
+                console.log('Setting remote description');
+                this.pc.setRemoteDescription(new RTCSessionDescription(message));
+
+                for (var i = 0; i < this.iceCandidates.length; i++) {
+                    this.pc.addIceCandidate(this.iceCandidates[i]);
+                }
+
+                console.log('Sending answer to peer.');
+                this.pc.createAnswer().then(
+                    (sessionDescription) => {
+                        // Set Opus as the preferred codec in SDP if Opus is present.
+                        //  sessionDescription.sdp = preferOpus(sessionDescription.sdp);
+                        this.pc.setLocalDescription(sessionDescription);
+                        console.log('setLocalAndSendMessage sending message', sessionDescription);
+                        this.sendMessage(sessionDescription);
+                    }, (error) => {
+                        console.log('Failed to create session description: ' + error.toString());
+                    }
+                );
+                //}
             } else if (message.type === 'answer') {
                 this.pc.setRemoteDescription(new RTCSessionDescription(message));
             } else if (message.type === 'candidate') {
@@ -365,6 +391,10 @@ export class HomePage {
             console.log('>>>>>> creating peer connection');
             this.createPeerConnection();
             this.pc.addStream(this.localStream);
+
+            if (this.user_type == 0)
+                this.tabBarElement.style.display = 'none';
+
             this.isStarted = true;
             console.log('isInitiator', this.isInitiator);
             if (this.isInitiator) {
@@ -478,6 +508,9 @@ export class HomePage {
     }
 
     stop() {
+        if (this.user_type == 0)
+            this.tabBarElement.style.display = 'flex';
+
         this.call_status = 'Finished';
         this.isStarted = false;
         // isAudioMuted = false;
