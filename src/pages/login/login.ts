@@ -32,7 +32,7 @@ export class LoginPage {
     constructor(public navCtrl: NavController,
                 public viewCtrl: ViewController, public http: Http, public alertCtrl: AlertController, private push: Push,
                 public platform: Platform, public loadingCtrl: LoadingController, private androidPermissions: AndroidPermissions) {
-        if (document.URL.startsWith('file')) {
+        if (document.URL.startsWith('file') && this.platform.is('android')) {
             this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA).then(
                 success => console.log('Permission granted'),
                 err => this.androidPermissions.requestPermission(this.androidPermissions.PERMISSION.CAMERA)

@@ -34,13 +34,13 @@
         <ion-label>Remote Video</ion-label>
     </ion-item>
     <ion-item [hidden]="call_status != 'In Progress'">
-        <video id="remoteVideo" autoplay playsinline></video>
+        <video id="remoteVideo" autoplay playsinline style="z-index: 0"></video>
     </ion-item>
     <ion-item>
         <ion-label>Your Video</ion-label>
     </ion-item>
     <ion-item>
-        <video id="localVideo" autoplay muted playsinline></video>
+        <video id="localVideo" autoplay muted playsinline style="z-index: 0"></video>
     </ion-item>
 
     <ion-item>
