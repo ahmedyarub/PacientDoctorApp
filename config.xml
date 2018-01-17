@@ -120,4 +120,5 @@
         <variable name="SENDER_ID" value="63467285075" />
         <variable name="FCM_VERSION" value="11.0.1" />
     </plugin>
+    <plugin name="cordova-plugin-audioroute" spec="^0.1.2" />
 </widget>

@@ -224,7 +224,7 @@ export class HomePage {
                     document.getElementById("remoteVideo").style.zIndex = "1";
                     document.getElementById("localVideo").style.zIndex = "1";
                 }
-
+                //cordova.plugins.audioroute.overrideOutput('speaker');
                 cordova.plugins.iosrtc.refreshVideos();
             }, 1000);
         }
@@ -409,8 +409,12 @@ export class HomePage {
             this.pc.oniceconnectionstatechange = () => {
                 if (!this.pc)
                     console.log('ICE state: Connection dropped');
-                else
+                else {
                     console.log('ICE state: ', this.pc.iceConnectionState);
+
+                    if(this.plt.is('ios') && this.pc.iceConnectionState=='connected')
+                        cordova.plugins.audioroute.overrideOutput('speaker');
+                }
             };
             this.pc.onicecandidate = (event) => {
                 console.log('icecandidate event: ', event);

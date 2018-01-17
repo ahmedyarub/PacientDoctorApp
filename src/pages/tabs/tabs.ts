@@ -2,7 +2,6 @@ import {Component} from '@angular/core';
 
 import {QuestionsPage} from '../questions/questions';
 import {HomePage} from '../home/home';
-import {LoginPage} from "../login/login";
 import {AlertController, Events, NavController} from "ionic-angular";
 import {CasesPage} from "../cases/cases";
 import {ProfilePage} from "../profile/profile";
