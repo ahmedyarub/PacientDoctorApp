@@ -226,7 +226,7 @@ export class HomePage {
                 }
                 //cordova.plugins.audioroute.overrideOutput('speaker');
                 cordova.plugins.iosrtc.refreshVideos();
-            }, 1000);
+            }, 500);
         }
 
         navigator.mediaDevices.enumerateDevices()
@@ -372,11 +372,11 @@ export class HomePage {
             this.sendMessage('bye');
         };
 
-        if (document.URL.startsWith('file')) {
-            this.ringtones.getRingtone().then((ringtones) => {
-                this.ringtone = ringtones[0].Url;
-            });
-        }
+        // if (document.URL.startsWith('file')) {
+        //     this.ringtones.getRingtone().then((ringtones) => {
+                this.ringtone = 'assets/ringtone.mp3';
+        //    });
+        //}
     }
 
     sendMessage(message) {
