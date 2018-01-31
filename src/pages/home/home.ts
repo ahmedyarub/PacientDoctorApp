@@ -1,5 +1,5 @@
 import {Component, ViewChild} from '@angular/core';
-import {AlertController, Content, Events, NavController, NavParams} from 'ionic-angular';
+import {AlertController, Content, Events, LoadingController, NavController, NavParams} from 'ionic-angular';
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
 import {Platform} from 'ionic-angular';
@@ -16,6 +16,7 @@ var temp;
 export class HomePage {
     @ViewChild(Content) content: Content;
 
+    cases_count: number = 0;
     tabBarElement: any;
     show_configuration: boolean = false;
     interval: number;
@@ -70,7 +71,7 @@ export class HomePage {
     iceCandidates: any;
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController, private ringtones: NativeRingtones,
-                public http: Http, public events: Events, public navParams: NavParams, public plt: Platform) {
+                public http: Http, public events: Events, public navParams: NavParams, public plt: Platform, public loadingCtrl: LoadingController) {
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
 
         if (this.user_type == 0) {
@@ -80,11 +81,19 @@ export class HomePage {
     }
 
     send_message($event) {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.post("/localapi/doctors/send_message", {
             case_id: this.case_id,
             message: this.message
         }).map(res => res.json())
             .subscribe(data => {
+                loader.dismissAll();
+
                 if (data.status === 0) {
                     alert('Message sent successfully!');
                 } else {
@@ -107,27 +116,20 @@ export class HomePage {
         console.log('Attempted to create or  join room', this.case_id);
     }
 
-    select_case($event) {
-        this.http.get('/localapi/queue/case_data?case_id=' + this.case_id)
-            .map(res => res.json())
-            .subscribe(data => {
-                this.call_status = 'Pending';
-                this.iceCandidates = new Array();
-                if (data.status === 0) {
-                    this.question_answer = data.question_answer;
-                    this.photo = data.image;
-                } else {
-                    alert('No more cases available!');
-                }
-            });
-    }
-
     submit_evaluation($event) {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.post("/localapi/queue/submit_evaluation", {
             case_id: this.case_id,
             evaluation: this.evaluation
         }).map(res => res.json())
             .subscribe(data => {
+                loader.dismissAll();
+
                 if (data.status === 0) {
                     alert('Evaluation submitted successfully!');
                 }
@@ -135,11 +137,19 @@ export class HomePage {
     }
 
     submit_notes($event) {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.post("/localapi/queue/submit_notes", {
             case_id: this.case_id,
             notes: this.notes
         }).map(res => res.json())
             .subscribe(data => {
+                loader.dismissAll();
+
                 if (data.status === 0) {
                     alert('Journal saved successfully!');
                 }
@@ -147,12 +157,20 @@ export class HomePage {
     }
 
     submit_result($event) {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.post("/localapi/queue/submit_case_result", {
             case_id: this.case_id,
             case_result: this.case_result,
             other_notes: this.other_notes
         }).map(res => res.json())
             .subscribe(data => {
+                loader.dismissAll();
+
                 if (data.status === 0) {
                     alert('Case result submitted successfully!');
                 }
@@ -161,9 +179,17 @@ export class HomePage {
 
 
     receive_notes($event) {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.get("/localapi/queue/receive_notes/" + this.case_id)
             .map(res => res.json())
             .subscribe(data => {
+                loader.dismissAll();
+
                 if (data.status === 0) {
                     this.notes = data.data;
                     alert('Journal received successfully!');
@@ -196,8 +222,8 @@ export class HomePage {
             .map(res => res.json())
             .subscribe(data => {
                 if (data.status == 0) {
-                    if (temp.cases.length != data.cases.length) {
-                        temp.cases = data.cases;
+                    if (temp.cases_count != data.cases_count) {
+                        temp.cases_count = data.cases_count;
 
                         alert('Cases updated!');
                     }
@@ -264,7 +290,7 @@ export class HomePage {
             console.log('Another peer made a request to join room ' + room);
             console.log('This peer is the initiator of room ' + room + '!');
 
-            if(!this.isStarted) {
+            if (!this.isStarted) {
                 this.isChannelReady = true;
 
                 if (this.ringtone)
@@ -348,10 +374,18 @@ export class HomePage {
         });
 
         if (window.localStorage.getItem("USER_TYPE") == '0') {
+            let loader = this.loadingCtrl.create({
+                content: "Loading..."
+            });
+
+            loader.present();
+
             this.http.post("/localapi/queue/start_call", {
                 case_id: this.case_id
             }).map(res => res.json())
                 .subscribe(data => {
+                    loader.dismissAll();
+
                     if (data.status === 0) {
                         //alert('Evaluation submitted successfully!');
                     }
@@ -374,7 +408,7 @@ export class HomePage {
 
         // if (document.URL.startsWith('file')) {
         //     this.ringtones.getRingtone().then((ringtones) => {
-                this.ringtone = 'assets/ringtone.mp3';
+        this.ringtone = 'assets/ringtone.mp3';
         //    });
         //}
     }
@@ -412,7 +446,7 @@ export class HomePage {
                 else {
                     console.log('ICE state: ', this.pc.iceConnectionState);
 
-                    if(this.plt.is('ios') && this.pc.iceConnectionState=='connected')
+                    if (this.plt.is('ios') && this.pc.iceConnectionState == 'connected')
                         cordova.plugins.audioroute.overrideOutput('speaker');
                 }
             };
@@ -468,6 +502,30 @@ export class HomePage {
         }, (error) => {
             console.log('Failed to create session description: ' + error.toString());
         });
+    }
+
+    next_case() {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
+        this.http.get('/localapi/queue/next_patient')
+            .map(res => res.json())
+            .subscribe(data => {
+                loader.dismissAll();
+
+                this.call_status = 'Pending';
+                this.iceCandidates = new Array();
+                if (data.status === 0) {
+                    this.question_answer = data.question_answer;
+                    this.photo = data.image;
+                    this.case_id = data.case_id;
+                } else {
+                    alert('No more cases available!');
+                }
+            });
     }
 
     requestTurn(turnURL) {

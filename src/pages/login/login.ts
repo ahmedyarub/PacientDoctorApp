@@ -18,6 +18,7 @@ export class LoginPage {
     password: string;
     push_id: string;
     showPassword: boolean = false;
+    savePassword: boolean = false;
 
     options: PushOptions = {
         android: {
@@ -59,7 +60,7 @@ export class LoginPage {
 
             const pushObject: PushObject = this.push.init(this.options);
 
-            pushObject.on('notification').subscribe((notification: any) =>   alert(notification.message));
+            pushObject.on('notification').subscribe((notification: any) => alert(notification.message));
 
             pushObject.on('registration').subscribe((registration: any) => {
                 console.log('Device registered', registration);
@@ -78,9 +79,19 @@ export class LoginPage {
             });
 
         this.email = window.localStorage.getItem("REMEMBER_ME");
+        this.password = window.localStorage.getItem("PASSWORD");
+
+        if (this.password!=null && this.password.length > 0)
+            this.savePassword = true;
     }
 
     login() {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.post('/localapi/login',
             {
                 email: this.email,
@@ -91,6 +102,8 @@ export class LoginPage {
         )
             .map(res => res.json())
             .subscribe(data => {
+                    loader.dismissAll();
+
                     if (data.status === 0) {
                         this.rememberUser();
                         window.localStorage.setItem("USER_TYPE", data.user_type);
@@ -106,6 +119,8 @@ export class LoginPage {
                     }
                 },
                 err => {
+                    loader.dismissAll();
+
                     let alert = this.alertCtrl.create({
                         title: 'Erro!',
                         subTitle: 'Invalid credencials!',
@@ -116,6 +131,12 @@ export class LoginPage {
     }
 
     forgot_password() {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+        
         this.http.post('/localapi/password_reset',
             {
                 email: this.email
@@ -123,6 +144,8 @@ export class LoginPage {
         )
             .map(res => res.json())
             .subscribe(data => {
+                    loader.dismissAll();
+
                     if (data.status === 0) {
                         let alert = this.alertCtrl.create({
                             title: 'Password Reset!',
@@ -141,6 +164,8 @@ export class LoginPage {
                     }
                 },
                 err => {
+                    loader.dismissAll();
+
                     let alert = this.alertCtrl.create({
                         title: 'Erro!',
                         subTitle: 'Invalid credencials!',
@@ -157,5 +182,10 @@ export class LoginPage {
 
     rememberUser() {
         window.localStorage.setItem("REMEMBER_ME", this.email);
+
+        if (this.savePassword)
+            window.localStorage.setItem("PASSWORD", this.password);
+        else
+            window.localStorage.setItem("PASSWORD", '');
     }
 }

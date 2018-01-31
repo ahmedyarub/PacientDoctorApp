@@ -17,12 +17,10 @@
     <button ion-button (click)="hangup()" [hidden]="user_type == 0 || call_status != 'In Progress'">End Call</button>
     <button ion-button (click)="call()" [hidden]="user_type == 0 || call_status != 'Pending' || !case_id">Call</button>
     <ion-item [hidden]="user_type == 0 && call_status != 'In Progress'">
-        <ion-label floating>Please select a case:</ion-label>
-        <ion-select type="select" [(ngModel)]="case_id" (ionChange)="select_case($event)">
-            <ion-option *ngFor="let case of cases" [value]="case.id">
-                {{case.name}}
-            </ion-option>
-        </ion-select>
+        <ion-label>Patients in queue: {{this.cases_count}}</ion-label>
+    </ion-item>
+    <ion-item [hidden]="user_type == 0 && call_status != 'In Progress'">
+        <button ion-button (click)="next_case()">Next case</button>
     </ion-item>
     <ion-item *ngIf="user_type == 0 && call_status == 'Finished'">
         <rating [(ngModel)]="evaluation"></rating>

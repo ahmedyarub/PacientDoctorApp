@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 
 import {QuestionsPage} from '../questions/questions';
 import {HomePage} from '../home/home';
-import {AlertController, Events, NavController} from "ionic-angular";
+import {AlertController, Events, LoadingController, NavController} from "ionic-angular";
 import {CasesPage} from "../cases/cases";
 import {ProfilePage} from "../profile/profile";
 import {Http} from "@angular/http";
@@ -19,7 +19,7 @@ export class TabsPage {
     tab4Root: any = LogoutPage;
     user_type: string;
 
-    constructor(public navCtrl: NavController, public events: Events, public http: Http, public alertCtrl: AlertController) {
+    constructor(public navCtrl: NavController, public events: Events, public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
         this.user_type = window.localStorage.getItem("USER_TYPE");
 
         events.subscribe('user:logout', () => {
@@ -33,11 +33,18 @@ export class TabsPage {
     }
 
     logout(event) {
+        let loader = this.loadingCtrl.create({
+            content: "Loading..."
+        });
+
+        loader.present();
+
         this.http.post('/localapi/logout',
             {}
         )
             .map(res => res.json())
             .subscribe(data => {
+                    loader.dismissAll();
 
                     if (data.status === 0) {
                         this.events.publish('user:logout');
