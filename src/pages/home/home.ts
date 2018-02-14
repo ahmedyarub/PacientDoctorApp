@@ -3,7 +3,7 @@ import {AlertController, Content, Events, LoadingController, NavController, NavP
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
 import {Platform} from 'ionic-angular';
-import {NativeRingtones} from '@ionic-native/native-ringtones';
+import { NativeAudio } from '@ionic-native/native-audio';
 
 declare var cordova: any;
 
@@ -66,11 +66,10 @@ export class HomePage {
         audio: true,
         video: true
     };
-    ringtone: any;
 
     iceCandidates: any;
 
-    constructor(public navCtrl: NavController, public alertCtrl: AlertController, private ringtones: NativeRingtones,
+    constructor(public navCtrl: NavController, public alertCtrl: AlertController, private nativeAudio: NativeAudio,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform, public loadingCtrl: LoadingController) {
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
 
@@ -78,6 +77,8 @@ export class HomePage {
             this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
             this.case_id = navParams.get('case_id');
         }
+
+        this.nativeAudio.preloadSimple('uniqueId1', 'assets/ringtone.mp3');
     }
 
     send_message($event) {
@@ -203,7 +204,6 @@ export class HomePage {
         else
             this.constraints.video = true;
 
-
         navigator.mediaDevices.getUserMedia(this.constraints)
             .then((stream) => {
                 console.log('Adding local stream.');
@@ -293,17 +293,14 @@ export class HomePage {
             if (!this.isStarted) {
                 this.isChannelReady = true;
 
-                if (this.ringtone)
-                    this.ringtones.playRingtone(this.ringtone);
+                this.nativeAudio.loop('uniqueId1')
 
                 var r = confirm("Accept call?");
                 if (r == true) {
                     this.maybeStart();
                 }
 
-                if (this.ringtone)
-                    this.ringtones.stopRingtone(this.ringtone);
-            }
+                this.nativeAudio.stop('uniqueId1')            }
         });
 
         this.socket.on('joined', (room) => {
@@ -320,13 +317,11 @@ export class HomePage {
             if (message === 'got user media') {
                 //this.maybeStart();
             } else if (message.type === 'offer') {
-                if (this.ringtone)
-                    this.ringtones.playRingtone(this.ringtone);
+                this.nativeAudio.loop('uniqueId1')
 
                 //var r = confirm("Accept call?");
 
-                if (this.ringtone)
-                    this.ringtones.stopRingtone(this.ringtone);
+                this.nativeAudio.stop('uniqueId1')
 
                 //if (r == true) {
                 console.log('Call accepted');
@@ -405,12 +400,6 @@ export class HomePage {
         window.onbeforeunload = () => {
             this.sendMessage('bye');
         };
-
-        // if (document.URL.startsWith('file')) {
-        //     this.ringtones.getRingtone().then((ringtones) => {
-        this.ringtone = 'assets/ringtone.mp3';
-        //    });
-        //}
     }
 
     sendMessage(message) {

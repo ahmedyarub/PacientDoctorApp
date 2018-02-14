@@ -23,11 +23,11 @@ import {HttpModule, Http} from '@angular/http';
 import {AndroidPermissions} from "@ionic-native/android-permissions";
 import {Camera} from '@ionic-native/camera';
 import {Ionic2RatingModule} from 'ionic2-rating';
-import {NativeRingtones} from '@ionic-native/native-ringtones';
 
 import {Push} from '@ionic-native/push';
 import {ProfilePage} from "../pages/profile/profile";
 import {LogoutPage} from "../pages/logout/logout";
+import {NativeAudio} from "@ionic-native/native-audio";
 
 @NgModule({
     declarations: [
@@ -74,8 +74,8 @@ import {LogoutPage} from "../pages/logout/logout";
         {provide: Http, useClass: ExtendedHttpService},
         AndroidPermissions,
         Camera,
-        NativeRingtones,
-        Push
+        Push,
+        NativeAudio
     ]
 })
 export class AppModule {
