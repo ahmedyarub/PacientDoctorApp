@@ -3,7 +3,7 @@ import {AlertController, Content, Events, LoadingController, NavController, NavP
 import * as io from "socket.io-client";
 import {Http} from "@angular/http";
 import {Platform} from 'ionic-angular';
-import { NativeAudio } from '@ionic-native/native-audio';
+import {NativeAudio} from '@ionic-native/native-audio';
 
 declare var cordova: any;
 
@@ -71,14 +71,14 @@ export class HomePage {
 
     constructor(public navCtrl: NavController, public alertCtrl: AlertController, private nativeAudio: NativeAudio,
                 public http: Http, public events: Events, public navParams: NavParams, public plt: Platform, public loadingCtrl: LoadingController) {
+        this.nativeAudio.preloadComplex('uniqueId1', 'assets/ringtone.mp3', 1, 1, 0);
+
         this.user_type = Number(window.localStorage.getItem("USER_TYPE"));
 
         if (this.user_type == 0) {
             this.tabBarElement = document.querySelector('.tabbar.show-tabbar');
             this.case_id = navParams.get('case_id');
         }
-
-        this.nativeAudio.preloadSimple('uniqueId1', 'assets/ringtone.mp3');
     }
 
     send_message($event) {
@@ -295,12 +295,15 @@ export class HomePage {
 
                 this.nativeAudio.loop('uniqueId1')
 
-                var r = confirm("Accept call?");
-                if (r == true) {
-                    this.maybeStart();
-                }
+                setTimeout(() => {
+                    var r = confirm("Accept call?");
+                    if (r == true) {
+                        this.maybeStart();
+                    }
 
-                this.nativeAudio.stop('uniqueId1')            }
+                    this.nativeAudio.stop('uniqueId1');
+                },1000);
+            }
         });
 
         this.socket.on('joined', (room) => {
@@ -317,11 +320,11 @@ export class HomePage {
             if (message === 'got user media') {
                 //this.maybeStart();
             } else if (message.type === 'offer') {
-                this.nativeAudio.loop('uniqueId1')
+                //this.nativeAudio.loop('uniqueId1')
 
                 //var r = confirm("Accept call?");
 
-                this.nativeAudio.stop('uniqueId1')
+                //this.nativeAudio.stop('uniqueId1')
 
                 //if (r == true) {
                 console.log('Call accepted');
