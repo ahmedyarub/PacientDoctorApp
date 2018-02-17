@@ -28,14 +28,20 @@ export class QuestionsPage {
     }
 
     takePhoto() {
-         this.camera.getPicture({
-             destinationType: this.camera.DestinationType.DATA_URL,
-             sourceType: this.camera.PictureSourceType.CAMERA
-         }).then((imageData) => {
-             this.image = "data:image/jpeg;base64," + imageData;
-         }, (err) => {
-             alert(err);
-         });
+        //var imageData = "iVBORw0KGgoAAAANSUhEUgAAALAAAAC8CAIAAABXF7NyAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAB3SURBVHhe7cExAQAAAMKg9U9tDB8gAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAATmqEiwABLwsPIAAAAABJRU5ErkJggg==";
+
+        //this.image = "data:image/png;base64," + imageData;
+
+        this.camera.getPicture({
+            destinationType: this.camera.DestinationType.DATA_URL,
+            sourceType: this.camera.PictureSourceType.CAMERA,
+            targetWidth: 1920,
+            targetHeight: 1080
+        }).then((imageData) => {
+            this.image = "data:image/jpeg;base64," + imageData;
+        }, (err) => {
+            alert(err);
+        });
     }
 
     dataURItoBlob(dataURI) {

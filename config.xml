@@ -115,10 +115,10 @@
     <plugin name="cordova-plugin-inappbrowser" spec="^1.7.2" />
     <plugin name="cordova-plugin-file" spec="^5.0.0" />
     <plugin name="cordova-opentok-android-permissions" spec="^1.0.1" />
-    <plugin name="cordova-plugin-native-ringtones" spec="^0.2.5" />
     <plugin name="phonegap-plugin-push" spec="^2.1.2">
         <variable name="SENDER_ID" value="63467285075" />
         <variable name="FCM_VERSION" value="11.0.1" />
     </plugin>
     <plugin name="cordova-plugin-audioroute" spec="^0.1.2" />
+    <plugin name="cordova-plugin-nativeaudio" spec="^3.0.9" />
 </widget>
